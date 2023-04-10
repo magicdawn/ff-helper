@@ -20,6 +20,9 @@ jobs:
 
       - run: pnpm install
 
+      - name: apt install
+        run: sudo apt install -y clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev
+
       # test
       # - run: pnpm test-cover
 

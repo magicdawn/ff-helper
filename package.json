@@ -1,6 +1,6 @@
 {
   "name": "ff-helper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ffmpeg helper by native binding, build when install",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

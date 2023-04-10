@@ -3,7 +3,10 @@ import {
   configuration,
   getVideoDuration,
   getVideoDurationDisplay,
+  getVideoDurationDisplaySync,
+  getVideoDurationSync,
   getVideoRotation,
+  getVideoRotationSync,
 } from '../ts-src'
 
 // TODO: add a sample video file
@@ -14,15 +17,24 @@ describe('ff-helper', () => {
     configuration().includes('--').should.ok()
   })
 
-  it('.getVideoDuration', () => {
-    getVideoDuration(file).should.eql(2654000)
+  it('.getVideoDurationSync', () => {
+    getVideoDurationSync(file).should.eql(2654000)
+  })
+  it('.getVideoDuration', async () => {
+    ;(await getVideoDuration(file)).should.eql(2654000)
   })
 
-  it('.getVideoDurationDisplay', () => {
-    getVideoDurationDisplay(file).should.eql('00:44:14')
+  it('.getVideoDurationDisplaySync', async () => {
+    getVideoDurationDisplaySync(file).should.eql('00:44:14')
+  })
+  it('.getVideoDurationDisplay', async () => {
+    ;(await getVideoDurationDisplay(file)).should.eql('00:44:14')
   })
 
-  it('.getVideoRotation', () => {
-    getVideoRotation(file).should.eql(0)
+  it('.getVideoRotationSync', () => {
+    getVideoRotationSync(file).should.eql(0)
+  })
+  it('.getVideoRotation', async () => {
+    ;(await getVideoRotation(file)).should.eql(0)
   })
 })

@@ -32,9 +32,13 @@ $ pnpm add ff-helper
 
 ## API
 
-```js
-const ffHelper = require('ff-helper')
-```
+### `getVideoDuration(file: string): Promise<number>`
+
+video duration in millseconds
+
+### `getVideoRotation(file: string): Promise<number>`
+
+get video rotation, in degrees (0-360), counterclockwise
 
 ## Changelog
 

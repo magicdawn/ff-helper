@@ -9,7 +9,10 @@
     "Cargo.toml",
     "Cargo.lock",
     "build.rs",
-    "lib"
+    "lib",
+    "addon.js",
+    "addon.d.ts",
+    "ff-helper.darwin-x64.node"
   ],
   "dependencies": {
     "@napi-rs/cli": "^2.15.2",
@@ -39,7 +42,8 @@
     "build:tsc": "rm -rf lib; tsc",
     "build": "pnpm build:release && pnpm test && pnpm build:tsc",
     "prepublishOnly": "pnpm build",
-    "install": "npm run build:release",
+    "install": "npm run build-addon-when-necessary",
+    "build-addon-when-necessary": "(node ./addon.js > /dev/null 2>&1) || npm run build:release",
     "test": "mocha",
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
     "_prepublishOnly": "napi prepublish -t npm",

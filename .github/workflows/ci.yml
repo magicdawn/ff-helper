@@ -14,8 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # no cache
+      # - name: apt install
+      #   run: sudo apt install -y clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev ffmpeg
+
       - name: apt install
-        run: sudo apt install -y clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev ffmpeg
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev ffmpeg
+
+      - uses: Swatinem/rust-cache@v2
 
       - uses: pnpm/action-setup@v2
         with: { version: 7 }

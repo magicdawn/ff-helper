@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: apt install
+        run: sudo apt install -y clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev
+
       - uses: pnpm/action-setup@v2
         with: { version: 7 }
 
@@ -19,9 +22,6 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install
-
-      - name: apt install
-        run: sudo apt install -y clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev
 
       # test
       # - run: pnpm test-cover

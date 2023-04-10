@@ -17,3 +17,5 @@ Cargo.lock
 
 # for test
 sample-videos/
+coverage
+.nyc_*

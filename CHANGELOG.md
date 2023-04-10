@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.0.3 2023-04-11
+
+- utilize napi-rs `struct AsyncTask` & `trait Task` to support async version
+
 ## v0.0.2 2023-04-11
 
 - bundle ff-helper.darwin-x64.node

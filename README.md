@@ -8,6 +8,22 @@
 [![npm downloads](https://img.shields.io/npm/dm/ff-helper.svg?style=flat-square)](https://www.npmjs.com/package/ff-helper)
 [![npm license](https://img.shields.io/npm/l/ff-helper.svg?style=flat-square)](http://magicdawn.mit-license.org)
 
+## Install ffmpeg lib
+
+### macOS
+
+```sh
+brew install pkg-config ffmpeg
+```
+
+### On Debian-based systems
+
+```sh
+apt install -y clang libavcodec-dev libavformat-dev libavutil-dev pkg-config
+```
+
+more see https://github.com/zmwangx/rust-ffmpeg/wiki/Notes-on-building
+
 ## Install
 
 ```sh

@@ -24,6 +24,7 @@
     "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
+    "dl-vampire": "^1.4.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "husky": "^8.0.3",

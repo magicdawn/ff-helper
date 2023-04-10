@@ -1,11 +1,11 @@
 [package]
 name = "ff-helper"
 version = "0.0.1"
-description = "ffmpeg helper by native binding, using neon"
+description = "ffmpeg helper by native binding"
 authors = ["magicdawn"]
 license = "MIT"
-edition = "2018"
-exclude = ["index.node"]
+edition = "2021"
+exclude = ["*.node"]
 
 [lib]
 crate-type = ["cdylib"]
@@ -13,8 +13,15 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
+napi = { version = "2.12.0", default-features = false, features = ["napi4"] }
+napi-derive = "2.12.2"
+ffmpeg-next = "6.0.0"
+ffmpeg-sys-next = "6.0.1"
 
-[dependencies.neon]
-version = "0.10"
-default-features = false
-features = ["napi-6"]
+
+[build-dependencies]
+napi-build = "2.0.1"
+
+[profile.release]
+lto = true

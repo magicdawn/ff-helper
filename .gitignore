@@ -1,5 +1,16 @@
-target
-index.node
 **/node_modules
 **/.DS_Store
 npm-debug.log*
+
+#Added by cargo
+/target
+Cargo.lock
+
+# addon
+**/*.node
+/addon.js
+/addon.d.ts
+
+# ts
+**/*.tsbuildinfo
+/lib

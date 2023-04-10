@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with: { version: 7 }
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      # test
+      # - run: pnpm test-cover
+
+      # test:report
+      # - uses: codecov/codecov-action@v3

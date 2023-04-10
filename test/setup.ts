@@ -1,4 +1,4 @@
-const url = 'https://download.pexels.com/vimeo/371817283/pexels-pressmaster-3195394.mp4'
+const url = 'https://download.pexels.com/vimeo/371817283/pexels-pressmaster-3195394.mp4?width=3840'
 
 export const file = __dirname + '/sample-videos/sample.mp4'
 export const durationDisplay = '00:00:13'

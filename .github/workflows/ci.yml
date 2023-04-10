@@ -35,6 +35,12 @@ jobs:
 
       - run: pnpm install
 
+      # cache samples
+      - uses: actions/cache@v3
+        with:
+          path: 'test/sample-videos/*.mp4'
+          key: ${{ runner.os }}-${{ hashFiles('./test/setup.ts') }}
+
       # test
       - run: pnpm test-cover
 

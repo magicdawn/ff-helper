@@ -8,8 +8,10 @@ Cargo.lock
 
 # addon
 **/*.node
-/addon.js
-/addon.d.ts
+
+# used in typedoc
+# /addon.js
+# /addon.d.ts
 
 # ts
 **/*.tsbuildinfo

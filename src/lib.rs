@@ -4,7 +4,9 @@
 
 mod helper;
 
-use helper::{ff, napi_catch_unwind};
+use std::{ffi::CStr, str::from_utf8_unchecked};
+
+use helper::{ff, ffsys, napi_catch_unwind};
 use napi::bindgen_prelude::*;
 use napi::*;
 use napi_derive::{module_exports, napi};
@@ -18,6 +20,18 @@ fn init(_: JsObject) -> Result<()> {
 #[napi]
 fn configuration() -> &'static str {
   ff::util::configuration()
+}
+#[napi]
+fn version() -> u32 {
+  ff::util::version()
+}
+#[napi]
+fn license() -> &'static str {
+  ff::util::license()
+}
+#[napi]
+fn version_info() -> &'static str {
+  unsafe { from_utf8_unchecked(CStr::from_ptr(ffsys::av_version_info()).to_bytes()) }
 }
 
 struct GetVideoDuration {

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.1.0 2023-04-11
+
+- test: use network video
+- rs: version / license etc
+- feat: catch_unwind, mod helper, get_video_info
+
 ## v0.0.3 2023-04-11
 
 - utilize napi-rs `struct AsyncTask` & `trait Task` to support async version

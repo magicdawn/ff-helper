@@ -32,13 +32,43 @@ $ pnpm add ff-helper
 
 ## API
 
-### `getVideoDuration(file: string): Promise<number>`
+### `getVideoDurationSync(file: string): number`
 
-video duration in millseconds
+get video duration sync, return number as ms
 
-### `getVideoRotation(file: string): Promise<number>`
+### `getVideoDuration(file: string, signal?: AbortSignal | undefined | null): Promise<number>`
+
+get video duration, return number as ms
+
+### `getVideoRotationSync(file: string): number`
+
+get video rotation sync, in degrees (0-360), counterclockwise
+
+### `getVideoRotation(file: string, signal?: AbortSignal | undefined | null): Promise<number>`
 
 get video rotation, in degrees (0-360), counterclockwise
+
+### `getVideoInfo(file: string, signal?: AbortSignal | undefined | null): Promise<VideoInfo>`
+
+```ts
+export interface VideoInfo {
+  /** degress, 0-360, counterclockwise  */
+  rotation: number
+  /** millseconds  */
+  duration: number
+  width: number
+  height: number
+}
+```
+
+### get ffmpeg versions
+
+```ts
+export function configuration(): string
+export function version(): number
+export function license(): string
+export function versionInfo(): string
+```
 
 ## Changelog
 

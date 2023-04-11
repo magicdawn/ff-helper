@@ -1,6 +1,5 @@
-use std::panic::{catch_unwind, UnwindSafe};
-
 use napi_derive::napi;
+use std::panic::{catch_unwind, UnwindSafe};
 
 // lib alias
 pub use ffmpeg_next as ff;

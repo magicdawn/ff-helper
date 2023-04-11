@@ -19,3 +19,6 @@ Cargo.lock
 sample-videos/
 coverage
 .nyc_*
+
+# typedoc
+/docs

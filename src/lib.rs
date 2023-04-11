@@ -2,11 +2,18 @@
 #![allow(unused_assignments)]
 #![deny(clippy::all)]
 
-use ffmpeg_next as ff;
-use ffmpeg_sys_next as ffsys;
+mod helper;
+
+use helper::{ff, napi_catch_unwind};
 use napi::bindgen_prelude::*;
 use napi::*;
-use napi_derive::napi;
+use napi_derive::{module_exports, napi};
+
+#[module_exports]
+fn init(_: JsObject) -> Result<()> {
+  ff::init().unwrap();
+  Ok(())
+}
 
 #[napi]
 fn configuration() -> &'static str {
@@ -21,10 +28,7 @@ impl Task for GetVideoDuration {
   type Output = i64;
   type JsValue = JsNumber;
   fn compute(&mut self) -> Result<Self::Output> {
-    let input = ff::format::input(&self.file).unwrap();
-    // AVFormatContext.duration: in AV_TIME_BASE fractional seconds
-    let duration = input.duration() / (ffsys::AV_TIME_BASE as i64) * 1000;
-    Ok(duration)
+    napi_catch_unwind(|| helper::get_duration(&helper::open(&self.file)))
   }
   fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
     env.create_int64(output)
@@ -54,43 +58,9 @@ struct GetVideoRotation {
 impl Task for GetVideoRotation {
   type Output = i32;
   type JsValue = JsNumber;
-
   fn compute(&mut self) -> Result<Self::Output> {
-    let mut rotation: i32 = 0;
-
-    let input = ff::format::input(&self.file).unwrap();
-    let video_stream = input.streams().best(ff::media::Type::Video).unwrap();
-    let display_matrix = video_stream
-      .side_data()
-      .find(|side| side.kind() == ff::codec::packet::side_data::Type::DisplayMatrix);
-
-    match display_matrix {
-      Some(side_data) => {
-        let buf = side_data.data();
-
-        let matrix = buf
-          .chunks(4)
-          .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))
-          .collect::<Vec<_>>();
-
-        let mut _rotation: f64 = 0.0;
-        unsafe {
-          // @return the angle (in degrees) by which the transformation rotates the frame counterclockwise.
-          // The angle will be in range -180.0, 180.0, or NaN if the matrix is singular.
-          _rotation = ffsys::av_display_rotation_get(matrix.as_ptr());
-        }
-        rotation = _rotation.round() as i32
-      }
-      None => {
-        //
-      }
-    }
-
-    // 0-360
-    rotation = (rotation + 360) % 360;
-    Ok(rotation)
+    napi_catch_unwind(|| helper::get_rotation(&helper::open(&self.file)))
   }
-
   fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
     env.create_int32(output)
   }
@@ -110,4 +80,42 @@ fn get_video_rotation_sync(file: String) -> i32 {
 #[napi]
 fn get_video_rotation(file: String, signal: Option<AbortSignal>) -> AsyncTask<GetVideoRotation> {
   AsyncTask::with_optional_signal(GetVideoRotation { file }, signal)
+}
+
+#[napi]
+fn get_metadata(file: String) {
+  let input = ff::format::input(&file).unwrap();
+  let format_metadata = input.metadata();
+  println!("format metadata {:#?}", format_metadata);
+
+  let video_stream = input.streams().best(ff::media::Type::Video).unwrap();
+  let video_metadata = video_stream.metadata();
+  println!("video metadata {:#?}", video_metadata);
+}
+
+struct GetVideoInfo {
+  file: String,
+}
+
+#[napi]
+impl Task for GetVideoInfo {
+  type Output = helper::VideoInfo;
+  type JsValue = helper::VideoInfo;
+
+  fn compute(&mut self) -> Result<Self::Output> {
+    napi_catch_unwind(|| {
+      let input = helper::open(&self.file);
+      helper::get_info(&input)
+    })
+  }
+
+  // https://github.com/swc-project/swc/blob/v1.3.49/bindings/binding_core_node/src/transform.rs#L41-L42
+  fn resolve(&mut self, _: Env, output: Self::Output) -> Result<Self::JsValue> {
+    Ok(output)
+  }
+}
+
+#[napi]
+fn get_video_info(file: String, signal: Option<AbortSignal>) -> AsyncTask<GetVideoInfo> {
+  AsyncTask::with_optional_signal(GetVideoInfo { file }, signal)
 }

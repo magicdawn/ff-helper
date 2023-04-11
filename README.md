@@ -32,25 +32,13 @@ $ pnpm add ff-helper
 
 ## API
 
-### `getVideoDurationSync(file: string): number`
+see typedoc https://github.com/magicdawn/ff-helper
 
-get video duration sync, return number as ms
-
-### `getVideoDuration(file: string, signal?: AbortSignal | undefined | null): Promise<number>`
-
-get video duration, return number as ms
-
-### `getVideoRotationSync(file: string): number`
-
-get video rotation sync, in degrees (0-360), counterclockwise
-
-### `getVideoRotation(file: string, signal?: AbortSignal | undefined | null): Promise<number>`
-
-get video rotation, in degrees (0-360), counterclockwise
-
-### `getVideoInfo(file: string, signal?: AbortSignal | undefined | null): Promise<VideoInfo>`
+### get video info
 
 ```ts
+export declare async funciton getVideoInfo(file: string): Promise<VideoInfo>;
+
 export interface VideoInfo {
   /** degress, 0-360, counterclockwise  */
   rotation: number
@@ -59,15 +47,6 @@ export interface VideoInfo {
   width: number
   height: number
 }
-```
-
-### get ffmpeg versions
-
-```ts
-export function configuration(): string
-export function version(): number
-export function license(): string
-export function versionInfo(): string
 ```
 
 ## Changelog

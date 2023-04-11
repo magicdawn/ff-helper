@@ -32,7 +32,7 @@ $ pnpm add ff-helper
 
 ## API
 
-see typedoc https://github.com/magicdawn/ff-helper
+see typedoc https://magicdawn.github.io/ff-helper/
 
 ### get video info
 

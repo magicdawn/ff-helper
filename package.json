@@ -12,7 +12,11 @@
     "lib",
     "addon.js",
     "addon.d.ts",
-    "ff-helper.darwin-x64.node"
+    "ff-helper.darwin-x64.node",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package.json"
   ],
   "dependencies": {
     "@napi-rs/cli": "^2.15.2",

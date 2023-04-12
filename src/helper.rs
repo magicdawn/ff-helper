@@ -32,19 +32,19 @@ pub fn get_rotation(input: &Input) -> i32 {
 
   if let Some(matrix_side_data) = display_matrix {
     let buf = matrix_side_data.data();
+    let ptr = buf.as_ptr() as *const i32;
 
-    // TODO: find a way &[u8] -> * const i32
-
-    let matrix = buf
-      .chunks(4)
-      .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))
-      .collect::<Vec<_>>();
+    // let matrix = buf
+    //   .chunks(4)
+    //   .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))
+    //   .collect::<Vec<_>>();
+    // let pter = matrix.as_ptr();
 
     let mut _rotation: f64 = 0.0;
     unsafe {
       // @return the angle (in degrees) by which the transformation rotates the frame counterclockwise.
       // The angle will be in range -180.0, 180.0, or NaN if the matrix is singular.
-      _rotation = ffsys::av_display_rotation_get(matrix.as_ptr());
+      _rotation = ffsys::av_display_rotation_get(ptr);
     }
     rotation = _rotation.round() as i32
   }

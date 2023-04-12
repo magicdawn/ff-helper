@@ -33,6 +33,8 @@ pub fn get_rotation(input: &Input) -> i32 {
   if let Some(matrix_side_data) = display_matrix {
     let buf = matrix_side_data.data();
 
+    // TODO: find a way &[u8] -> * const i32
+
     let matrix = buf
       .chunks(4)
       .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))

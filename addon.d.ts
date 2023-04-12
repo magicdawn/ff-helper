@@ -11,12 +11,27 @@ export interface VideoInfo {
   width: number
   height: number
 }
+/**
+ * Return the libavutil build-time configuration.
+ */
 export function configuration(): string
+/**
+ * Return the LIBAVUTIL_VERSION_INT constant.
+ */
 export function version(): number
+/**
+ * Return the libavutil license.
+ */
 export function license(): string
+/**
+ * Return an informative version string.
+ * This usually is the actual release version number or a git commit description.
+ * This string has no fixed format and can change any time.
+ * It should never be parsed by code.
+ */
 export function versionInfo(): string
 /**
- * get video duration sync, return number as ms
+ * get video duration synchronous, return number as ms
  */
 export function getVideoDurationSync(file: string): number
 /**
@@ -27,7 +42,7 @@ export function getVideoDuration(
   signal?: AbortSignal | undefined | null
 ): Promise<number>
 /**
- * get video rotation sync, in degrees (0-360), counterclockwise
+ * get video rotation synchronous, in degrees (0-360), counterclockwise
  */
 export function getVideoRotationSync(file: string): number
 /**
@@ -38,6 +53,9 @@ export function getVideoRotation(
   signal?: AbortSignal | undefined | null
 ): Promise<number>
 export function getMetadata(file: string): void
+/**
+ * get video information. (width, height, duration, rotation etc)
+ */
 export function getVideoInfo(
   file: string,
   signal?: AbortSignal | undefined | null

@@ -1,7 +1,7 @@
 {
   "name": "ff-helper",
   "version": "0.1.0",
-  "description": "ffmpeg helper by native binding, build when install",
+  "description": "ffmpeg helper by napi-rs binding",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -72,7 +72,11 @@
   "keywords": [
     "ffmpeg",
     "ffprobe",
-    "neon"
+    "napi",
+    "napi-rs",
+    "video-info",
+    "video-rotation",
+    "video-duration"
   ],
   "bugs": {
     "url": "https://github.com/magicdawn/ff-helper/issues"

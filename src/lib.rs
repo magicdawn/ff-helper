@@ -17,18 +17,36 @@ fn init(_: JsObject) -> Result<()> {
   Ok(())
 }
 
+/**
+ * Return the libavutil build-time configuration.
+ */
 #[napi]
 fn configuration() -> &'static str {
   ff::util::configuration()
 }
+
+/**
+ * Return the LIBAVUTIL_VERSION_INT constant.
+ */
 #[napi]
 fn version() -> u32 {
   ff::util::version()
 }
+
+/**
+ * Return the libavutil license.
+ */
 #[napi]
 fn license() -> &'static str {
   ff::util::license()
 }
+
+/**
+ * Return an informative version string.
+ * This usually is the actual release version number or a git commit description.
+ * This string has no fixed format and can change any time.
+ * It should never be parsed by code.
+ */
 #[napi]
 fn version_info() -> &'static str {
   unsafe { from_utf8_unchecked(CStr::from_ptr(ffsys::av_version_info()).to_bytes()) }
@@ -50,7 +68,7 @@ impl Task for GetVideoDuration {
 }
 
 /**
- * get video duration sync, return number as ms
+ * get video duration synchronous, return number as ms
  */
 #[napi]
 fn get_video_duration_sync(file: String) -> i64 {
@@ -81,7 +99,7 @@ impl Task for GetVideoRotation {
 }
 
 /**
- * get video rotation sync, in degrees (0-360), counterclockwise
+ * get video rotation synchronous, in degrees (0-360), counterclockwise
  */
 #[napi]
 fn get_video_rotation_sync(file: String) -> i32 {
@@ -128,7 +146,9 @@ impl Task for GetVideoInfo {
     Ok(output)
   }
 }
-
+/**
+ * get video information. (width, height, duration, rotation etc)
+ */
 #[napi]
 fn get_video_info(file: String, signal: Option<AbortSignal>) -> AsyncTask<GetVideoInfo> {
   AsyncTask::with_optional_signal(GetVideoInfo { file }, signal)

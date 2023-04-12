@@ -25,28 +25,26 @@ pub fn get_rotation(input: &Input) -> i32 {
   let mut rotation: i32 = 0;
 
   let video_stream = input.streams().best(MediaType::Video).unwrap();
+
   let display_matrix = video_stream
     .side_data()
     .find(|side| side.kind() == SideDataType::DisplayMatrix);
 
-  match display_matrix {
-    Some(side_data) => {
-      let buf = side_data.data();
+  if let Some(matrix_side_data) = display_matrix {
+    let buf = matrix_side_data.data();
 
-      let matrix = buf
-        .chunks(4)
-        .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))
-        .collect::<Vec<_>>();
+    let matrix = buf
+      .chunks(4)
+      .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))
+      .collect::<Vec<_>>();
 
-      let mut _rotation: f64 = 0.0;
-      unsafe {
-        // @return the angle (in degrees) by which the transformation rotates the frame counterclockwise.
-        // The angle will be in range -180.0, 180.0, or NaN if the matrix is singular.
-        _rotation = ffsys::av_display_rotation_get(matrix.as_ptr());
-      }
-      rotation = _rotation.round() as i32
+    let mut _rotation: f64 = 0.0;
+    unsafe {
+      // @return the angle (in degrees) by which the transformation rotates the frame counterclockwise.
+      // The angle will be in range -180.0, 180.0, or NaN if the matrix is singular.
+      _rotation = ffsys::av_display_rotation_get(matrix.as_ptr());
     }
-    None => {}
+    rotation = _rotation.round() as i32
   }
 
   // 0-360

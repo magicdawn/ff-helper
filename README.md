@@ -10,7 +10,7 @@
 
 ## Install rust toolchain
 
-This binding will link against system installed ffmpeg(libavcodec libav\*).
+This binding will link against system installed ffmpeg(libavcodec libav\*). <br />
 It will run cargo build when install, make sure you have rust toolchain installed.
 
 ## Install ffmpeg lib

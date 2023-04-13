@@ -7,9 +7,16 @@ dayjs.extend(duration)
 import * as addon from '../addon'
 export * from '../addon'
 
+/**
+ * synchronous get humanized video duration for display, like `00:10:30` mean 10 minutes 30 seconds
+ */
 export function getVideoDurationDisplaySync(file: string) {
   return displayMs(addon.getVideoDurationSync(file))
 }
+
+/**
+ * get humanized video duration for display, like `00:10:30` mean 10 minutes 30 seconds
+ */
 export async function getVideoDurationDisplay(file: string) {
   return displayMs(await addon.getVideoDuration(file))
 }

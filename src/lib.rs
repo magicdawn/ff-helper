@@ -3,6 +3,7 @@
 #![deny(clippy::all)]
 
 mod helper;
+mod screengen;
 
 use helper::{ff, ffsys, to_napi_err, NapiResult, VideoInfo};
 use napi::bindgen_prelude::*;
@@ -11,7 +12,8 @@ use napi_derive::{module_exports, napi};
 use std::{ffi::CStr, str::from_utf8_unchecked};
 
 #[module_exports]
-fn init(_: JsObject) -> Result<()> {
+fn init(_: JsObject) -> NapiResult<()> {
+  env_logger::init();
   ff::init().map_err(to_napi_err)?;
   Ok(())
 }

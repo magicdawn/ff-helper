@@ -11,6 +11,8 @@ export interface VideoInfo {
   width: number
   height: number
 }
+export function getScreenshotAtSync(file: string, ts: number): Buffer
+export function getScreenshotAt(file: string, ts: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * Return the libavutil build-time configuration.
 */

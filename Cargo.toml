@@ -19,6 +19,8 @@ napi-derive = { version = "2.12.2" }
 ffmpeg-next = "6.0.0"
 ffmpeg-sys-next = "6.0.1"
 once_cell = "1.17.1"
+env_logger = "0.10.0"
+log = "0.4.17"
 
 
 [build-dependencies]

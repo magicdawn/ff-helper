@@ -24,3 +24,5 @@ coverage
 
 # typedoc
 /docs
+
+/.vscode/settings.json

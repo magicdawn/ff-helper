@@ -1,14 +1,15 @@
-import addon, { configuration, license, version, versionInfo } from '../addon'
+import fs from 'fs'
+import path from 'path'
+import sharp from 'sharp'
+import { getScreenshotAtSync, getVideoInfoSync } from '../addon'
 
-const file = '/Users/magicdawn/Movies/曼达洛人.The.Mandalorian.S03E06.1080p.H265-NEW字幕组.mp4'
+const file = path.join(__dirname, '../test/sample-videos/sample-rotated-90.mp4')
 
 void (async () => {
-  console.log(await addon.getVideoInfo(file))
-
-  console.log(configuration())
-  console.log(version())
-  console.log(versionInfo())
-  console.log(license())
+  // console.log(configuration())
+  // console.log(version())
+  // console.log(versionInfo())
+  // console.log(license())
 
   // try {
   // } catch (e) {
@@ -19,5 +20,20 @@ void (async () => {
   //   console.error(e.stack || e)
   // }
 
-  console.log(111)
+  const info = getVideoInfoSync(file)
+  // console.log(info)
+  const b = getScreenshotAtSync(file, 8 * 1000)
+  // console.log(b.byteLength)
+  const jpegBuf = await sharp(b, {
+    raw: {
+      channels: 4,
+      width: info.width,
+      height: info.height,
+    },
+  })
+    .jpeg({ mozjpeg: true, quality: 85 })
+    .withMetadata()
+    .rotate(360 - info.rotation)
+    .toBuffer()
+  fs.writeFileSync(path.join(__dirname, '../test/sample-videos/sample-rotated-90-1s.jpg'), jpegBuf)
 })()

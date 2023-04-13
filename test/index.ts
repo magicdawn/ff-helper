@@ -7,6 +7,7 @@ import {
   getVideoDurationDisplaySync,
   getVideoDurationSync,
   getVideoInfo,
+  getVideoInfoSync,
   getVideoRotation,
   getVideoRotationSync,
 } from '../ts-src'
@@ -49,9 +50,10 @@ describe('ff-helper', () => {
       width: 3840,
       height: 2160,
     } satisfies VideoInfo)
-
+  })
+  it('.getVideoInfoSync', () => {
     // 有 rotate 时, width/height 不变, 需要 user 转换
-    ;(await getVideoInfo(fileRotated)).should.deepEqual({
+    getVideoInfoSync(fileRotated).should.deepEqual({
       duration: 13000,
       rotation: 270,
       width: 3840,

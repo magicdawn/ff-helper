@@ -244,6 +244,7 @@ const {
   getVideoRotationSync,
   getVideoRotation,
   getMetadata,
+  getVideoInfoSync,
   getVideoInfo,
 } = nativeBinding
 
@@ -256,4 +257,5 @@ module.exports.getVideoDuration = getVideoDuration
 module.exports.getVideoRotationSync = getVideoRotationSync
 module.exports.getVideoRotation = getVideoRotation
 module.exports.getMetadata = getMetadata
+module.exports.getVideoInfoSync = getVideoInfoSync
 module.exports.getVideoInfo = getVideoInfo

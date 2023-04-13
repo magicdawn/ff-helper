@@ -54,6 +54,10 @@ export function getVideoRotation(
 ): Promise<number>
 export function getMetadata(file: string): void
 /**
+ * get video information synchronous. (width, height, duration, rotation etc)
+ */
+export function getVideoInfoSync(file: string): VideoInfo
+/**
  * get video information. (width, height, duration, rotation etc)
  */
 export function getVideoInfo(

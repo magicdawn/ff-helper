@@ -4,7 +4,7 @@
 
 mod helper;
 
-use helper::{ff, ffsys, to_napi_err, NapiResult};
+use helper::{ff, ffsys, to_napi_err, NapiResult, VideoInfo};
 use napi::bindgen_prelude::*;
 use napi::*;
 use napi_derive::{module_exports, napi};
@@ -148,6 +148,15 @@ impl Task for GetVideoInfo {
     Ok(output)
   }
 }
+
+/**
+ * get video information synchronous. (width, height, duration, rotation etc)
+ */
+#[napi]
+fn get_video_info_sync(file: String) -> Result<VideoInfo> {
+  GetVideoInfo { file }.compute()
+}
+
 /**
  * get video information. (width, height, duration, rotation etc)
  */

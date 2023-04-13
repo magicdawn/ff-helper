@@ -1,6 +1,3 @@
-use napi_derive::napi;
-use std::panic::{catch_unwind, UnwindSafe};
-
 // lib alias
 pub use ffmpeg_next as ff;
 pub use ffmpeg_sys_next as ffsys;
@@ -11,20 +8,38 @@ pub use ff::format::context::Input;
 pub use ff::media::Type as MediaType;
 pub use ff::Error as FFError;
 
-pub fn open(file: &String) -> Input {
-  ff::format::input(file).unwrap()
+use napi_derive::napi;
+use once_cell::sync::Lazy;
+use std::panic::{catch_unwind, UnwindSafe};
+
+pub type NapiResult<T> = Result<T, napi::Error>;
+
+pub const NO_VIDEO_STREAM: &str = "can not find any video stream in file";
+
+pub static NO_VIDEO_STREAM_ERR: Lazy<napi::Error> =
+  Lazy::new(|| napi::Error::from_reason(NO_VIDEO_STREAM));
+
+pub fn to_napi_err(err: impl std::error::Error) -> napi::Error {
+  napi::Error::from_reason(format!("{:?}", err))
 }
 
-pub fn get_duration(input: &Input) -> i64 {
+pub fn open(file: &String) -> NapiResult<Input> {
+  ff::format::input(file).map_err(to_napi_err)
+}
+
+pub fn get_duration(input: &Input) -> NapiResult<i64> {
   // AVFormatContext.duration: in AV_TIME_BASE fractional seconds
   let duration = input.duration() / (ffsys::AV_TIME_BASE as i64) * 1000;
-  duration
+  Ok(duration)
 }
 
-pub fn get_rotation(input: &Input) -> i32 {
+pub fn get_rotation(input: &Input) -> NapiResult<i32> {
   let mut rotation: i32 = 0;
 
-  let video_stream = input.streams().best(MediaType::Video).unwrap();
+  let video_stream = input
+    .streams()
+    .best(MediaType::Video)
+    .ok_or(NO_VIDEO_STREAM_ERR.clone())?;
 
   let display_matrix = video_stream
     .side_data()
@@ -34,24 +49,19 @@ pub fn get_rotation(input: &Input) -> i32 {
     let buf = matrix_side_data.data();
     let ptr = buf.as_ptr() as *const i32;
 
-    // let matrix = buf
-    //   .chunks(4)
-    //   .map(|c| i32::from_ne_bytes(c.try_into().unwrap()))
-    //   .collect::<Vec<_>>();
-    // let pter = matrix.as_ptr();
-
     let mut _rotation: f64 = 0.0;
     unsafe {
       // @return the angle (in degrees) by which the transformation rotates the frame counterclockwise.
       // The angle will be in range -180.0, 180.0, or NaN if the matrix is singular.
       _rotation = ffsys::av_display_rotation_get(ptr);
     }
+
     rotation = _rotation.round() as i32
   }
 
   // 0-360
   rotation = (rotation + 360) % 360;
-  rotation
+  Ok(rotation)
 }
 
 #[napi(object)]
@@ -65,14 +75,18 @@ pub struct VideoInfo {
   pub height: u32,
 }
 
-pub fn get_info(input: &Input) -> VideoInfo {
-  let duration = get_duration(input);
-  let rotation = get_rotation(input);
+pub fn get_info(input: &Input) -> NapiResult<VideoInfo> {
+  let duration = get_duration(input)?;
+  let rotation = get_rotation(input)?;
 
-  let video_stream = input.streams().best(MediaType::Video).unwrap();
+  let video_stream = input
+    .streams()
+    .best(MediaType::Video)
+    .ok_or(NO_VIDEO_STREAM_ERR.clone())?;
 
-  let codec = ff::codec::context::Context::from_parameters(video_stream.parameters()).unwrap();
-  let decoder = codec.decoder().video().unwrap();
+  let codec =
+    ff::codec::context::Context::from_parameters(video_stream.parameters()).map_err(to_napi_err)?;
+  let decoder = codec.decoder().video().map_err(to_napi_err)?;
 
   let width = decoder.width();
   let height = decoder.height();
@@ -83,7 +97,7 @@ pub fn get_info(input: &Input) -> VideoInfo {
     width,
     height,
   };
-  info
+  Ok(info)
 }
 
 /**

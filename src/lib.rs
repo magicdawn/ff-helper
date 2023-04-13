@@ -4,16 +4,15 @@
 
 mod helper;
 
-use std::{ffi::CStr, str::from_utf8_unchecked};
-
-use helper::{ff, ffsys, napi_catch_unwind};
+use helper::{ff, ffsys, to_napi_err, NapiResult};
 use napi::bindgen_prelude::*;
 use napi::*;
 use napi_derive::{module_exports, napi};
+use std::{ffi::CStr, str::from_utf8_unchecked};
 
 #[module_exports]
 fn init(_: JsObject) -> Result<()> {
-  ff::init().unwrap();
+  ff::init().map_err(to_napi_err)?;
   Ok(())
 }
 
@@ -60,7 +59,7 @@ impl Task for GetVideoDuration {
   type Output = i64;
   type JsValue = JsNumber;
   fn compute(&mut self) -> Result<Self::Output> {
-    napi_catch_unwind(|| helper::get_duration(&helper::open(&self.file)))
+    helper::get_duration(&helper::open(&self.file)?)
   }
   fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
     env.create_int64(output)
@@ -71,8 +70,8 @@ impl Task for GetVideoDuration {
  * get video duration synchronous, return number as ms
  */
 #[napi]
-fn get_video_duration_sync(file: String) -> i64 {
-  GetVideoDuration { file }.compute().unwrap()
+fn get_video_duration_sync(file: String) -> NapiResult<i64> {
+  GetVideoDuration { file }.compute()
 }
 
 /**
@@ -91,7 +90,7 @@ impl Task for GetVideoRotation {
   type Output = i32;
   type JsValue = JsNumber;
   fn compute(&mut self) -> Result<Self::Output> {
-    napi_catch_unwind(|| helper::get_rotation(&helper::open(&self.file)))
+    helper::get_rotation(&helper::open(&self.file)?)
   }
   fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
     env.create_int32(output)
@@ -102,8 +101,8 @@ impl Task for GetVideoRotation {
  * get video rotation synchronous, in degrees (0-360), counterclockwise
  */
 #[napi]
-fn get_video_rotation_sync(file: String) -> i32 {
-  GetVideoRotation { file }.compute().unwrap()
+fn get_video_rotation_sync(file: String) -> NapiResult<i32> {
+  GetVideoRotation { file }.compute()
 }
 
 /**
@@ -115,14 +114,19 @@ fn get_video_rotation(file: String, signal: Option<AbortSignal>) -> AsyncTask<Ge
 }
 
 #[napi]
-fn get_metadata(file: String) {
-  let input = ff::format::input(&file).unwrap();
+fn get_metadata(file: String) -> Result<()> {
+  let input = ff::format::input(&file).map_err(to_napi_err)?;
   let format_metadata = input.metadata();
   println!("format metadata {:#?}", format_metadata);
 
-  let video_stream = input.streams().best(ff::media::Type::Video).unwrap();
+  let video_stream = input
+    .streams()
+    .best(ff::media::Type::Video)
+    .ok_or(helper::NO_VIDEO_STREAM_ERR.clone())?;
   let video_metadata = video_stream.metadata();
   println!("video metadata {:#?}", video_metadata);
+
+  Ok(())
 }
 
 struct GetVideoInfo {
@@ -135,10 +139,8 @@ impl Task for GetVideoInfo {
   type JsValue = helper::VideoInfo;
 
   fn compute(&mut self) -> Result<Self::Output> {
-    napi_catch_unwind(|| {
-      let input = helper::open(&self.file);
-      helper::get_info(&input)
-    })
+    let input = helper::open(&self.file)?;
+    helper::get_info(&input)
   }
 
   // https://github.com/swc-project/swc/blob/v1.3.49/bindings/binding_core_node/src/transform.rs#L41-L42

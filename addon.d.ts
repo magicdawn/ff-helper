@@ -35,7 +35,7 @@ export function versionInfo(): string
 /**
  * get video duration synchronous, return number as ms
 */
-export function getVideoDurationSync(file: string): NapiResult
+export function getVideoDurationSync(file: string): number
 /**
  * get video duration, return number as ms
 */
@@ -43,7 +43,7 @@ export function getVideoDuration(file: string, signal?: AbortSignal | undefined 
 /**
  * get video rotation synchronous, in degrees (0-360), counterclockwise
 */
-export function getVideoRotationSync(file: string): NapiResult
+export function getVideoRotationSync(file: string): number
 /**
  * get video rotation, in degrees (0-360), counterclockwise
 */

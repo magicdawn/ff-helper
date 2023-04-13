@@ -5,14 +5,14 @@
 mod helper;
 mod screengen;
 
-use helper::{ff, ffsys, to_napi_err, NapiResult, VideoInfo};
+use helper::{ff, ffsys, to_napi_err, VideoInfo};
 use napi::bindgen_prelude::*;
 use napi::*;
 use napi_derive::{module_exports, napi};
 use std::{ffi::CStr, str::from_utf8_unchecked};
 
 #[module_exports]
-fn init(_: JsObject) -> NapiResult<()> {
+fn init(_: JsObject) -> napi::Result<()> {
   env_logger::init();
   ff::init().map_err(to_napi_err)?;
   Ok(())
@@ -72,7 +72,7 @@ impl Task for GetVideoDuration {
  * get video duration synchronous, return number as ms
  */
 #[napi]
-fn get_video_duration_sync(file: String) -> NapiResult<i64> {
+fn get_video_duration_sync(file: String) -> napi::Result<i64> {
   GetVideoDuration { file }.compute()
 }
 
@@ -103,7 +103,7 @@ impl Task for GetVideoRotation {
  * get video rotation synchronous, in degrees (0-360), counterclockwise
  */
 #[napi]
-fn get_video_rotation_sync(file: String) -> NapiResult<i32> {
+fn get_video_rotation_sync(file: String) -> napi::Result<i32> {
   GetVideoRotation { file }.compute()
 }
 
@@ -116,7 +116,7 @@ fn get_video_rotation(file: String, signal: Option<AbortSignal>) -> AsyncTask<Ge
 }
 
 #[napi]
-fn get_metadata(file: String) -> Result<()> {
+fn get_metadata(file: String) -> napi::Result<()> {
   let input = ff::format::input(&file).map_err(to_napi_err)?;
   let format_metadata = input.metadata();
   println!("format metadata {:#?}", format_metadata);
@@ -155,7 +155,7 @@ impl Task for GetVideoInfo {
  * get video information synchronous. (width, height, duration, rotation etc)
  */
 #[napi]
-fn get_video_info_sync(file: String) -> Result<VideoInfo> {
+fn get_video_info_sync(file: String) -> napi::Result<VideoInfo> {
   GetVideoInfo { file }.compute()
 }
 

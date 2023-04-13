@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.0 2023-04-13
+
+- 45758b7 api: add getVideoInfoSync
+- cff016c rs: eliminate unwrap
+- 4acacaf rs: make `&[u8]` to `* const i32`
+
 ## v0.1.0 2023-04-11
 
 - test: use network video

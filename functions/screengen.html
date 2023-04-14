@@ -19,12 +19,12 @@
 <ul class="tsd-signatures tsd-kind-function">
 <li class="tsd-signature tsd-anchor-link" id="screengen">screengen<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#screengen" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>take a screenshot for video at given timestamp
-node+rust version of <a href="https://gitlab.com/opennota/screengen">https://gitlab.com/opennota/screengen</a></p>
+<div class="tsd-comment tsd-typography"><p>take a screenshot for video at given timestamp.</p>
+<p>node+rust version of <a href="https://gitlab.com/opennota/screengen">https://gitlab.com/opennota/screengen</a></p>
 
 <h3>Returns</h3><p>Buffer encoded with mozjpeg, just write to a jpg or jpeg file</p>
 
-<h3>Remarks</h3><p>the rust exported <code>getScreenshotAtSync</code> &amp; <code>getScreenshotAt</code> returns raw pixel Buffer</p>
+<h3>Remarks</h3><p>the rust exported <code>getScreenshotAtSync</code> &amp; <code>getScreenshotAt</code> returns raw RGBA pixel Buffer</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -39,7 +39,7 @@ node+rust version of <a href="https://gitlab.com/opennota/screengen">https://git
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/magicdawn/ff-helper/blob/1b5cb9c/ts-src/index.ts#L40">ts-src/index.ts:40</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/magicdawn/ff-helper/blob/77bd18c/ts-src/index.ts#L40">ts-src/index.ts:40</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

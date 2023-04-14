@@ -26,15 +26,15 @@ function displayMs(ms: number) {
 }
 
 /**
- * take a screenshot for video at given timestamp
+ * take a screenshot for video at given timestamp.
+ *
  * node+rust version of https://gitlab.com/opennota/screengen
  *
- * @param file - the video file
- * @param ts - the given timestamp, in millseconds
- *
+ * @param file the video file
+ * @param ts the given timestamp, in millseconds
  * @returns Buffer encoded with mozjpeg, just write to a jpg or jpeg file
  *
- * @remarks the rust exported `getScreenshotAtSync` & `getScreenshotAt` returns raw pixel Buffer
+ * @remarks the rust exported `getScreenshotAtSync` & `getScreenshotAt` returns raw RGBA pixel Buffer
  */
 
 export async function screengen(file: string, ts: number) {

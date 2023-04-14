@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.2.1 2023-04-14
+
+- feat: port go version screengen https://gitlab.com/opennota/screengen
+- fix: getDuration lost ms part
+
 ## v0.2.0 2023-04-13
 
 - 45758b7 api: add getVideoInfoSync

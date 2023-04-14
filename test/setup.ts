@@ -2,7 +2,7 @@ const url = 'https://download.pexels.com/vimeo/371817283/pexels-pressmaster-3195
 
 export const file = __dirname + '/sample-videos/sample.mp4'
 export const durationDisplay = '00:00:13'
-export const duration = 13000 // ms
+export const duration = 13960 // ms
 export const fileRotated = __dirname + '/sample-videos/sample-rotated-90.mp4'
 
 import { execSync } from 'child_process'

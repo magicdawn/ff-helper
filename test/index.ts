@@ -45,7 +45,7 @@ describe('ff-helper', () => {
 
   it('.getVideoInfo', async () => {
     ;(await getVideoInfo(file)).should.deepEqual({
-      duration: 13000,
+      duration,
       rotation: 0,
       width: 3840,
       height: 2160,
@@ -54,7 +54,7 @@ describe('ff-helper', () => {
   it('.getVideoInfoSync', () => {
     // 有 rotate 时, width/height 不变, 需要 user 转换
     getVideoInfoSync(fileRotated).should.deepEqual({
-      duration: 13000,
+      duration,
       rotation: 270,
       width: 3840,
       height: 2160,

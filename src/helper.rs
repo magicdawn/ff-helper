@@ -8,6 +8,7 @@ pub use ff::format::context::Input;
 pub use ff::media::Type as MediaType;
 pub use ff::Error as FFError;
 
+use ff::Rescale;
 use napi_derive::napi;
 use once_cell::sync::Lazy;
 use std::panic::{catch_unwind, UnwindSafe};
@@ -29,7 +30,8 @@ pub fn open(file: &String) -> NapiResult<Input> {
 
 pub fn get_duration(input: &Input) -> NapiResult<i64> {
   // AVFormatContext.duration: in AV_TIME_BASE fractional seconds
-  let duration = input.duration() / (ffsys::AV_TIME_BASE as i64) * 1000;
+  // target: scale to 1/1000s aka ms
+  let duration = input.duration().rescale(ff::rescale::TIME_BASE, (1, 1000));
   Ok(duration)
 }
 

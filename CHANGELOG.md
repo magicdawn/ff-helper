@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.2 2023-04-23
+
+- rebundle ff-helper.darwin-x64.node for ffmpeg v6, brew has ffmpeg v6 released.
+
 ## v0.2.1 2023-04-14
 
 - feat: port go version screengen https://gitlab.com/opennota/screengen

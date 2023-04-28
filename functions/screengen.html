@@ -17,10 +17,10 @@
 <h1>Function screengen</h1></div>
 <section class="tsd-panel">
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="screengen"><span class="tsd-kind-call-signature">screengen</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">file</span>, <span class="tsd-kind-parameter">ts</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Buffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#screengen" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="screengen"><span class="tsd-kind-call-signature">screengen</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">file</span>, <span class="tsd-kind-parameter">ts</span>, <span class="tsd-kind-parameter">displayWidth</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">displayHeight</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Buffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#screengen" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>take a screenshot for video at given timestamp.</p>
-<p>node+rust version of <a href="https://gitlab.com/opennota/screengen">https://gitlab.com/opennota/screengen</a></p>
+<div class="tsd-comment tsd-typography"><p>take a screenshot for video at given timestamp. \n
+node+rust version of <a href="https://gitlab.com/opennota/screengen">https://gitlab.com/opennota/screengen</a></p>
 
 <h3>Remarks</h3><p>the rust exported <code>getScreenshotAtSync</code> &amp; <code>getScreenshotAt</code> returns raw RGBA pixel Buffer</p>
 </div>
@@ -34,11 +34,19 @@
 <li>
 <h5><span class="tsd-kind-parameter">ts</span>: <span class="tsd-signature-type">number</span></h5>
 <div class="tsd-comment tsd-typography"><p>the given timestamp, in millseconds</p>
+</div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">displayWidth</span>: <span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>expected image width</p>
+</div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">displayHeight</span>: <span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>expected image height</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Buffer</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Buffer encoded with mozjpeg, just write to a jpg or jpeg file</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/magicdawn/ff-helper/blob/c527371/ts-src/index.ts#L40">ts-src/index.ts:40</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/magicdawn/ff-helper/blob/ef35a7e/ts-src/index.ts#L41">ts-src/index.ts:41</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -72,6 +80,7 @@
 <li><a href="getVideoRotationSync.html"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>get<wbr/>Video<wbr/>Rotation<wbr/>Sync</span></a></li>
 <li><a href="license.html"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>license</span></a></li>
 <li><a href="screengen.html" class="current"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>screengen</span></a></li>
+<li><a href="screengenScale.html"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>screengen<wbr/>Scale</span></a></li>
 <li><a href="version.html"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>version</span></a></li>
 <li><a href="versionInfo.html"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>version<wbr/>Info</span></a></li></ul></nav></div></div></div>
 <div class="tsd-generator">

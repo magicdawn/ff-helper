@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.3.0 2023-04-28
+
+- feat: screengen, add displayWidth & displayHeight to rust layer.
+- feat: screengen, handle rotation inside screengen
+- feat: screengen, add `screengenScale`
+
 ## v0.2.2 2023-04-23
 
 - rebundle ff-helper.darwin-x64.node for ffmpeg v6, brew has ffmpeg v6 released.

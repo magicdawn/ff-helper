@@ -26,30 +26,67 @@ function displayMs(ms: number) {
 }
 
 /**
- * take a screenshot for video at given timestamp.
- *
+ * take a screenshot for video at given timestamp. \n
  * node+rust version of https://gitlab.com/opennota/screengen
  *
  * @param file the video file
  * @param ts the given timestamp, in millseconds
- * @returns Buffer encoded with mozjpeg, just write to a jpg or jpeg file
+ * @param displayWidth expected image width
+ * @param displayHeight expected image height
  *
+ * @returns Buffer encoded with mozjpeg, just write to a jpg or jpeg file
  * @remarks the rust exported `getScreenshotAtSync` & `getScreenshotAt` returns raw RGBA pixel Buffer
  */
 
-export async function screengen(file: string, ts: number) {
+export async function screengen(
+  file: string,
+  ts: number,
+  displayWidth?: number,
+  displayHeight?: number
+) {
   const info = await addon.getVideoInfo(file)
-  const pixelBuf = await addon.getScreenshotAt(file, ts)
+
+  // fallback scale=1.0
+  displayWidth ||= info.displayWidth
+  displayHeight ||= info.displayHeight
+
+  // to int
+  displayWidth = Math.trunc(displayWidth)
+  displayHeight = Math.trunc(displayHeight)
+
+  const pixelBuf = await addon.getScreenshotAt(file, ts, displayWidth, displayHeight)
   const jpegBuf = await sharp(pixelBuf, {
     raw: {
       channels: 4,
-      width: info.width,
-      height: info.height,
+      width: displayWidth,
+      height: displayHeight,
     },
   })
     .jpeg({ mozjpeg: true, quality: 85 })
     .withMetadata()
-    .rotate(360 - info.rotation)
     .toBuffer()
   return jpegBuf
+}
+
+/**
+ * take a screenshot for video at given timestamp.
+ *
+ * @param file the video file
+ * @param ts the given timestamp, in millseconds
+ * @param scale scale of video width & height
+ *
+ * @returns Buffer encoded with mozjpeg, just write to a jpg or jpeg file
+ */
+
+export async function screengenScale(file: string, ts: number, scale?: number) {
+  const info = await addon.getVideoInfo(file)
+
+  // fallback scale=1.0
+  scale ||= 1
+  if (scale > 1) scale = 1
+  if (scale <= 0) throw new Error('scale <= 0 not supported')
+
+  const width = info.displayWidth * scale
+  const height = info.displayHeight * scale
+  return screengen(file, ts, width, height)
 }

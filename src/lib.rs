@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_assignments)]
+#![allow(unused_doc_comments)]
 #![deny(clippy::all)]
 
 mod helper;

@@ -71,10 +71,21 @@ pub fn get_rotation(input: &Input) -> NapiResult<i32> {
 pub struct VideoInfo {
   /** degress, 0-360, counterclockwise */
   pub rotation: i32,
+  /** check if rotation = 90 | 270 */
+  pub should_swap: bool,
+
   /** millseconds */
   pub duration: i64,
+
+  /** raw width, before apply rotation  */
   pub width: u32,
+  /** raw height, before apply rotation  */
   pub height: u32,
+
+  /** display width, after apply rotation  */
+  pub display_width: u32,
+  /** display height, after apply rotation  */
+  pub display_height: u32,
 }
 
 pub fn get_info(input: &Input) -> NapiResult<VideoInfo> {
@@ -93,11 +104,25 @@ pub fn get_info(input: &Input) -> NapiResult<VideoInfo> {
   let width = decoder.width();
   let height = decoder.height();
 
+  let should_swap = match rotation {
+    90 | 270 => true,
+    _ => false,
+  };
+
+  let (display_width, display_height) = if should_swap {
+    (height, width)
+  } else {
+    (width, height)
+  };
+
   let info = VideoInfo {
     duration,
     rotation,
     width,
     height,
+    should_swap,
+    display_width,
+    display_height,
   };
   Ok(info)
 }

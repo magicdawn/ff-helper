@@ -1,4 +1,7 @@
+import fse from 'fs-extra'
+import sharp from 'sharp'
 import 'should'
+import should from 'should'
 import {
   VideoInfo,
   configuration,
@@ -10,10 +13,16 @@ import {
   getVideoInfoSync,
   getVideoRotation,
   getVideoRotationSync,
+  screengen,
+  screengenScale,
 } from '../ts-src'
-
-import should from 'should'
 import { duration, durationDisplay, file, fileRotated } from './setup'
+
+async function checkImg(file: string, width: number, height: number) {
+  const metadata = await sharp(file).metadata()
+  metadata.width!.should.equal(width)
+  metadata.height!.should.equal(height)
+}
 
 describe('ff-helper', () => {
   it('.configuration', () => {
@@ -49,6 +58,9 @@ describe('ff-helper', () => {
       rotation: 0,
       width: 3840,
       height: 2160,
+      shouldSwap: false,
+      displayWidth: 3840,
+      displayHeight: 2160,
     } satisfies VideoInfo)
   })
   it('.getVideoInfoSync', () => {
@@ -58,6 +70,9 @@ describe('ff-helper', () => {
       rotation: 270,
       width: 3840,
       height: 2160,
+      shouldSwap: true,
+      displayWidth: 2160,
+      displayHeight: 3840,
     } satisfies VideoInfo)
   })
 })
@@ -71,6 +86,37 @@ describe('error tolerant', () => {
       e.message.includes('ffmpeg').should.ok()
       e.message.includes('Invalid data found when processing input').should.ok()
       e.code.should.equal('GenericFailure')
+    }
+  })
+})
+
+describe('screengen', () => {
+  it('.screengen', async () => {
+    {
+      const info = await getVideoInfo(file)
+      const imgBuf = await screengenScale(file, 1000, 0.5)
+      await fse.writeFile(__dirname + '/sample-videos/file-screenshot-1000ms-x0.5.jpg', imgBuf)
+      await checkImg(
+        __dirname + '/sample-videos/file-screenshot-1000ms-x0.5.jpg',
+        Math.trunc(info.width * 0.5),
+        Math.trunc(info.height * 0.5)
+      )
+    }
+
+    // float
+    {
+      const imgBuf = await screengen(file, 1000, 200.45, 100.45)
+      await fse.writeFile(__dirname + '/sample-videos/file-screenshot-1000ms-200x100.jpg', imgBuf)
+      await checkImg(__dirname + '/sample-videos/file-screenshot-1000ms-200x100.jpg', 200, 100)
+    }
+
+    // rotated
+    {
+      const info = await getVideoInfo(fileRotated)
+      const imgBuf = await screengenScale(fileRotated, 1000, 0.5)
+      const imgFile = __dirname + '/sample-videos/fileRotated-screenshot-1000ms-x0.5.jpg'
+      await fse.writeFile(imgFile, imgBuf)
+      await checkImg(imgFile, info.displayWidth * 0.5, info.displayHeight * 0.5)
     }
   })
 })

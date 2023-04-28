@@ -2,6 +2,7 @@
 
 use crate::helper::{self, *};
 use ff::Rescale;
+use image::{imageops, RgbaImage};
 use log::debug;
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
@@ -13,6 +14,8 @@ use napi_derive::napi;
 pub struct GetScreenshotAt {
   file: String,
   ts: i64,
+  width: Option<u32>,
+  height: Option<u32>,
 }
 
 #[napi]
@@ -20,23 +23,52 @@ impl Task for GetScreenshotAt {
   type JsValue = Buffer;
   type Output = Buffer;
   fn compute(&mut self) -> napi::Result<Self::Output> {
-    _get_screenshot_at(&self.file, self.ts)
+    _get_screenshot_at(&self.file, self.ts, self.width, self.height)
   }
   fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
     Ok(output)
   }
 }
+
+/**
+ * synchronous get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+ */
 #[napi]
-pub fn get_screenshot_at_sync(file: String, ts: i64) -> napi::Result<Buffer> {
-  GetScreenshotAt { file, ts }.compute()
+pub fn get_screenshot_at_sync(
+  file: String,
+  ts: i64,
+  width: Option<u32>,
+  height: Option<u32>,
+) -> napi::Result<Buffer> {
+  GetScreenshotAt {
+    file,
+    ts,
+    width,
+    height,
+  }
+  .compute()
 }
+
+/**
+ * get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+ */
 #[napi]
 pub fn get_screenshot_at(
   file: String,
   ts: i64,
+  width: Option<u32>,
+  height: Option<u32>,
   signal: Option<AbortSignal>,
 ) -> AsyncTask<GetScreenshotAt> {
-  AsyncTask::with_optional_signal(GetScreenshotAt { file, ts }, signal)
+  AsyncTask::with_optional_signal(
+    GetScreenshotAt {
+      file,
+      ts,
+      width,
+      height,
+    },
+    signal,
+  )
 }
 
 //
@@ -46,12 +78,31 @@ pub fn get_screenshot_at(
 // send_packet calls `avcodec_send_packet`
 // decoder.receive_frame calls `avcodec_receive_frame`
 //
-pub fn _get_screenshot_at(file: &String, ts: i64) -> NapiResult<Buffer> {
+pub fn _get_screenshot_at(
+  file: &String,
+  ts: i64,
+  display_width: Option<u32>,
+  display_height: Option<u32>,
+) -> napi::Result<Buffer> {
   let mut input = helper::open(file)?;
   let info = helper::get_info(&input)?;
-  // target size, current use 1.0
-  let width = info.width;
-  let height = info.height;
+
+  /**
+   * width & height, fallback to scale=1.0
+   * display_width & display_height is display dimension, after rotation
+   * width & height is frame dimension
+   *
+   * e.g 1920x1080 rotate 90 counterclockwise
+   * display_width=1080 display_height=1920
+   * width=1920 height=1080
+   * frame_extract = 1920x1080
+   * use image-rs to rotate to 1080x1920, same as (display_width x display_height)
+   */
+  let mut width = display_width.unwrap_or(info.display_width);
+  let mut height = display_height.unwrap_or(info.display_height);
+  if info.should_swap {
+    (width, height) = (height, width)
+  }
 
   let video_stream = input
     .streams()
@@ -183,6 +234,7 @@ pub fn _get_screenshot_at(file: &String, ts: i64) -> NapiResult<Buffer> {
     }
   }
 
+  // using iamge::iamgeops::resize can also do this
   let mut scaler = ff::software::scaling::Context::get(
     decoder.format(),
     decoder.width(),
@@ -190,7 +242,11 @@ pub fn _get_screenshot_at(file: &String, ts: i64) -> NapiResult<Buffer> {
     ff::format::Pixel::RGBA,
     width,
     height,
-    ff::software::scaling::Flags::BICUBIC,
+    // https://blog.csdn.net/leixiaohua1020/article/details/12029505
+    // https://stackoverflow.com/questions/29743648/which-flag-to-use-for-better-quality-with-sws-scale
+    // https://github.com/mutschler/mt/blob/master/mt.go
+    // mt used lanczos
+    ff::software::scaling::Flags::LANCZOS,
   )
   .map_err(to_napi_err)?;
 
@@ -215,6 +271,33 @@ pub fn _get_screenshot_at(file: &String, ts: i64) -> NapiResult<Buffer> {
     buf.len()
   );
 
-  let js_buf = Buffer::from(buf);
+  // no rotation
+  if info.rotation == 0 {
+    return Ok(Buffer::from(buf));
+  }
+
+  // rotate image
+  let mut image = RgbaImage::from_raw(width, height, buf.to_vec())
+    .ok_or_else(|| napi::Error::from_reason("can not create RgbaImage"))?;
+  match info.rotation {
+    90 => {
+      image = imageops::rotate270(&image);
+    }
+    180 => {
+      imageops::rotate180_in_place(&mut image);
+    }
+    270 => {
+      image = imageops::rotate90(&image);
+    }
+    _ => {
+      return Err(napi::Error::from_reason(format!(
+        "unsupported rotation {}",
+        info.rotation
+      )));
+    }
+  }
+
+  let img_buf = image.as_raw();
+  let js_buf = Buffer::from(img_buf.to_owned());
   Ok(js_buf)
 }

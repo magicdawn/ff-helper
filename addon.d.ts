@@ -6,13 +6,27 @@
 export interface VideoInfo {
   /** degress, 0-360, counterclockwise  */
   rotation: number
+  /** check if rotation = 90 | 270  */
+  shouldSwap: boolean
   /** millseconds  */
   duration: number
+  /** raw width, before apply rotation   */
   width: number
+  /** raw height, before apply rotation   */
   height: number
+  /** display width, after apply rotation   */
+  displayWidth: number
+  /** display height, after apply rotation   */
+  displayHeight: number
 }
-export function getScreenshotAtSync(file: string, ts: number): Buffer
-export function getScreenshotAt(file: string, ts: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
+/**
+ * synchronous get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+*/
+export function getScreenshotAtSync(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null): Buffer
+/**
+ * get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+*/
+export function getScreenshotAt(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * Return the libavutil build-time configuration.
 */

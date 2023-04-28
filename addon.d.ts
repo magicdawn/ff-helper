@@ -27,6 +27,7 @@ export function getScreenshotAtSync(file: string, ts: number, width?: number | u
  * get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
 */
 export function getScreenshotAt(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
+export function videoPreview(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number): Buffer
 /**
  * Return the libavutil build-time configuration.
 */

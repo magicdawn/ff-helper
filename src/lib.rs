@@ -5,6 +5,7 @@
 
 mod helper;
 mod screengen;
+mod video_preview;
 
 use helper::{ff, ffsys, to_napi_err, VideoInfo};
 use napi::bindgen_prelude::*;

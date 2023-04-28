@@ -1,11 +1,27 @@
-import sharp from 'sharp'
-
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
+import sharp from 'sharp'
 import * as addon from '../addon'
 export * from '../addon'
+
+/**
+ * use sharp mozjpeg to encode raw rgba buffer
+ */
+async function mozjpegEncode(rgbaPixelBuf: Buffer, width: number, height: number) {
+  const jpegBuf = await sharp(rgbaPixelBuf, {
+    raw: {
+      channels: 4,
+      width,
+      height,
+    },
+  })
+    .jpeg({ mozjpeg: true, quality: 85 })
+    .withMetadata()
+    .toBuffer()
+  return jpegBuf
+}
 
 /**
  * synchronous get humanized video duration for display, like `00:10:30` mean 10 minutes 30 seconds
@@ -55,16 +71,7 @@ export async function screengen(
   displayHeight = Math.trunc(displayHeight)
 
   const pixelBuf = await addon.getScreenshotAt(file, ts, displayWidth, displayHeight)
-  const jpegBuf = await sharp(pixelBuf, {
-    raw: {
-      channels: 4,
-      width: displayWidth,
-      height: displayHeight,
-    },
-  })
-    .jpeg({ mozjpeg: true, quality: 85 })
-    .withMetadata()
-    .toBuffer()
+  const jpegBuf = await mozjpegEncode(pixelBuf, displayWidth, displayHeight)
   return jpegBuf
 }
 
@@ -89,4 +96,15 @@ export async function screengenScale(file: string, ts: number, scale?: number) {
   const width = info.displayWidth * scale
   const height = info.displayHeight * scale
   return screengen(file, ts, width, height)
+}
+
+export async function genVideoPreview(file: string) {
+  const info = await addon.getVideoInfo(file)
+
+  const frameWidth = info.displayWidth * 0.5
+  const frameHeight = info.displayHeight * 0.5
+
+  const pixelBuf = addon.videoPreview(file, 4, 4, frameWidth, frameHeight)
+  const buf = await mozjpegEncode(pixelBuf, frameWidth * 4, frameHeight * 4)
+  return buf
 }

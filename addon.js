@@ -252,10 +252,11 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { getScreenshotAtSync, getScreenshotAt, configuration, version, license, versionInfo, getVideoDurationSync, getVideoDuration, getVideoRotationSync, getVideoRotation, getMetadata, getVideoInfoSync, getVideoInfo } = nativeBinding
+const { getScreenshotAtSync, getScreenshotAt, videoPreview, configuration, version, license, versionInfo, getVideoDurationSync, getVideoDuration, getVideoRotationSync, getVideoRotation, getMetadata, getVideoInfoSync, getVideoInfo } = nativeBinding
 
 module.exports.getScreenshotAtSync = getScreenshotAtSync
 module.exports.getScreenshotAt = getScreenshotAt
+module.exports.videoPreview = videoPreview
 module.exports.configuration = configuration
 module.exports.version = version
 module.exports.license = license

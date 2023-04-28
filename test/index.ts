@@ -1,10 +1,12 @@
 import fse from 'fs-extra'
+import { writeFile } from 'fs/promises'
 import sharp from 'sharp'
 import 'should'
 import should from 'should'
 import {
   VideoInfo,
   configuration,
+  genVideoPreview,
   getVideoDuration,
   getVideoDurationDisplay,
   getVideoDurationDisplaySync,
@@ -118,5 +120,12 @@ describe('screengen', () => {
       await fse.writeFile(imgFile, imgBuf)
       await checkImg(imgFile, info.displayWidth * 0.5, info.displayHeight * 0.5)
     }
+  })
+})
+
+describe('video-preview', () => {
+  it.only('simple', async () => {
+    const buf = await genVideoPreview(file)
+    writeFile(__dirname + '/sample-videos/video-preview.jpg', buf)
   })
 })

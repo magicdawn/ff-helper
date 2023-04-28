@@ -234,7 +234,8 @@ pub fn _get_screenshot_at(
     }
   }
 
-  // using iamge::iamgeops::resize can also do this
+  // using iamge::iamgeops::resize can also resize dimensions
+  // but sws_scale can resize between different pixel formats. e.g YUV420p -> RGBA
   let mut scaler = ff::software::scaling::Context::get(
     decoder.format(),
     decoder.width(),

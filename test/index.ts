@@ -6,13 +6,13 @@ import should from 'should'
 import {
   VideoInfo,
   configuration,
-  genVideoPreview,
   getVideoDuration,
   getVideoDurationDisplay,
   getVideoDurationDisplaySync,
   getVideoDurationSync,
   getVideoInfo,
   getVideoInfoSync,
+  getVideoPreviewScale,
   getVideoRotation,
   getVideoRotationSync,
   screengen,
@@ -125,7 +125,7 @@ describe('screengen', () => {
 
 describe('video-preview', () => {
   it.only('simple', async () => {
-    const buf = await genVideoPreview(file)
-    writeFile(__dirname + '/sample-videos/video-preview.jpg', buf)
+    const buf = await getVideoPreviewScale(file, 4, 4, 0.6)
+    writeFile(__dirname + '/sample-videos/video-preview-scalex0.6-4x4.jpg', buf)
   })
 })

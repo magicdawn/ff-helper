@@ -20,7 +20,7 @@ pub const NO_VIDEO_STREAM: &str = "can not find any video stream in file";
 pub static NO_VIDEO_STREAM_ERR: Lazy<napi::Error> =
   Lazy::new(|| napi::Error::from_reason(NO_VIDEO_STREAM));
 
-pub fn to_napi_err(err: impl std::error::Error) -> napi::Error {
+pub fn to_napi_err(err: impl std::fmt::Debug) -> napi::Error {
   napi::Error::from_reason(format!("{:?}", err))
 }
 

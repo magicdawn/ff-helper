@@ -70,9 +70,8 @@ export async function screengen(
   displayWidth = Math.trunc(displayWidth)
   displayHeight = Math.trunc(displayHeight)
 
-  const pixelBuf = await addon.getScreenshotAt(file, ts, displayWidth, displayHeight)
-  const jpegBuf = await mozjpegEncode(pixelBuf, displayWidth, displayHeight)
-  return jpegBuf
+  const pixelBuf = await addon.getScreenshotRaw(file, ts, displayWidth, displayHeight)
+  return await mozjpegEncode(pixelBuf, displayWidth, displayHeight)
 }
 
 /**
@@ -86,25 +85,45 @@ export async function screengen(
  */
 
 export async function screengenScale(file: string, ts: number, scale?: number) {
-  const info = await addon.getVideoInfo(file)
+  scale = validateScale(scale)
 
+  const info = await addon.getVideoInfo(file)
+  const width = info.displayWidth * scale
+  const height = info.displayHeight * scale
+
+  return screengen(file, ts, width, height)
+}
+
+function validateScale(scale?: number): number {
   // fallback scale=1.0
   scale ||= 1
   if (scale > 1) scale = 1
   if (scale <= 0) throw new Error('scale <= 0 not supported')
-
-  const width = info.displayWidth * scale
-  const height = info.displayHeight * scale
-  return screengen(file, ts, width, height)
+  return scale
 }
 
-export async function genVideoPreview(file: string) {
+export async function getVideoPreview(
+  file: string,
+  rows: number,
+  cols: number,
+  frameWidth: number,
+  frameHeight: number
+) {
+  // to int
+  frameWidth = Math.trunc(frameWidth)
+  frameHeight = Math.trunc(frameHeight)
+  const pixelBuf = await addon.getVideoPreviewRaw(file, rows, cols, frameWidth, frameHeight)
+  return await mozjpegEncode(pixelBuf, frameWidth * cols, frameHeight * rows)
+}
+export async function getVideoPreviewScale(
+  file: string,
+  rows: number,
+  cols: number,
+  scale?: number
+) {
+  scale = validateScale(scale)
   const info = await addon.getVideoInfo(file)
-
-  const frameWidth = info.displayWidth * 0.5
-  const frameHeight = info.displayHeight * 0.5
-
-  const pixelBuf = addon.videoPreview(file, 4, 4, frameWidth, frameHeight)
-  const buf = await mozjpegEncode(pixelBuf, frameWidth * 4, frameHeight * 4)
-  return buf
+  const frameWidth = info.displayWidth * scale
+  const frameHeight = info.displayHeight * scale
+  return getVideoPreview(file, rows, cols, frameWidth, frameHeight)
 }

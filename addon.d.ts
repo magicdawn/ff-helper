@@ -20,14 +20,17 @@ export interface VideoInfo {
   displayHeight: number
 }
 /**
- * synchronous get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+ * synchronous get screenshot raw pixel buffer at [ts] for [file],
+ * optional [width] & [height] fallback to video width & height
 */
-export function getScreenshotAtSync(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null): Buffer
+export function getScreenshotRawSync(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null): Buffer
 /**
- * get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+ * get screenshot raw pixel buffer at [ts] for [file],
+ * optional [width] & [height] fallback to video width & height
 */
-export function getScreenshotAt(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
-export function videoPreview(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number): Buffer
+export function getScreenshotRaw(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
+export function getVideoPreviewRawSync(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number): Buffer
+export function getVideoPreviewRaw(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * Return the libavutil build-time configuration.
 */

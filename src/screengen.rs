@@ -7,23 +7,19 @@ use log::debug;
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
-/**
- * @param ts: timestamp in millseconds
- */
-
-pub struct GetScreenshotAt {
+pub struct GetScreenshotRaw {
   file: String,
-  ts: i64,
+  ts: i64, // timestamp in millseconds
   width: Option<u32>,
   height: Option<u32>,
 }
 
 #[napi]
-impl Task for GetScreenshotAt {
+impl Task for GetScreenshotRaw {
   type JsValue = Buffer;
   type Output = Buffer;
   fn compute(&mut self) -> napi::Result<Self::Output> {
-    let vec = _get_screenshot_at(&self.file, self.ts, self.width, self.height)?.0;
+    let vec = _get_screenshot_raw(None, Some(&self.file), self.ts, self.width, self.height)?.0;
     Ok(Buffer::from(vec))
   }
   fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
@@ -32,16 +28,17 @@ impl Task for GetScreenshotAt {
 }
 
 /**
- * synchronous get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+ * synchronous get screenshot raw pixel buffer at [ts] for [file],
+ * optional [width] & [height] fallback to video width & height
  */
 #[napi]
-pub fn get_screenshot_at_sync(
+pub fn get_screenshot_raw_sync(
   file: String,
   ts: i64,
   width: Option<u32>,
   height: Option<u32>,
 ) -> napi::Result<Buffer> {
-  GetScreenshotAt {
+  GetScreenshotRaw {
     file,
     ts,
     width,
@@ -51,18 +48,19 @@ pub fn get_screenshot_at_sync(
 }
 
 /**
- * get screenshot at [ts] for [file], optional [width] & [height] fallback to video width & height
+ * get screenshot raw pixel buffer at [ts] for [file],
+ * optional [width] & [height] fallback to video width & height
  */
 #[napi]
-pub fn get_screenshot_at(
+pub fn get_screenshot_raw(
   file: String,
   ts: i64,
   width: Option<u32>,
   height: Option<u32>,
   signal: Option<AbortSignal>,
-) -> AsyncTask<GetScreenshotAt> {
+) -> AsyncTask<GetScreenshotRaw> {
   AsyncTask::with_optional_signal(
-    GetScreenshotAt {
+    GetScreenshotRaw {
       file,
       ts,
       width,
@@ -79,13 +77,22 @@ pub fn get_screenshot_at(
 // send_packet calls `avcodec_send_packet`
 // decoder.receive_frame calls `avcodec_receive_frame`
 //
-pub fn _get_screenshot_at(
-  file: &String,
+pub fn _get_screenshot_raw(
+  input: Option<&mut Input>,
+  file: Option<&String>,
   ts: i64,
   display_width: Option<u32>,
   display_height: Option<u32>,
 ) -> napi::Result<(Vec<u8>, u32, u32)> {
-  let mut input = helper::open(file)?;
+  let mut open_result: helper::Input;
+  let input = if input.is_some() {
+    input.unwrap()
+  } else {
+    open_result =
+      helper::open(file.ok_or_else(|| to_napi_err("input & file can not be both empty"))?)?;
+    &mut open_result
+  };
+
   let info = helper::get_info(&input)?;
 
   /**
@@ -234,6 +241,11 @@ pub fn _get_screenshot_at(
       break;
     }
   }
+  debug!(
+    "decoded_frame: timestamp={:?} pts={:?}",
+    decoded_frame.timestamp(),
+    decoded_frame.pts()
+  );
 
   // using iamge::iamgeops::resize can also resize dimensions
   // but sws_scale can resize between different pixel formats. e.g YUV420p -> RGBA
@@ -251,17 +263,10 @@ pub fn _get_screenshot_at(
     ff::software::scaling::Flags::LANCZOS,
   )
   .map_err(to_napi_err)?;
-
   let mut decoded_frame_scaled = ff::frame::Video::new(ff::format::Pixel::RGBA, width, height);
   scaler
     .run(&decoded_frame, &mut decoded_frame_scaled)
     .map_err(to_napi_err)?;
-
-  debug!(
-    "decoded_frame: timestamp={:?} pts={:?}",
-    decoded_frame.timestamp(),
-    decoded_frame.pts()
-  );
 
   let buf = decoded_frame_scaled.data(0);
   debug!(

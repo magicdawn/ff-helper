@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.1 2023-04-30
+
+- chore: ffmpeg seek & image overlay tweak
+
 ## v0.4.0 2023-04-29
 
 - feat: add `getVideoPreview`, rename rust exported to raw api, `getScreenshotRaw` / `getVideoPreviewRaw`

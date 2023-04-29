@@ -115,6 +115,7 @@ export async function getVideoPreview(
   const pixelBuf = await addon.getVideoPreviewRaw(file, rows, cols, frameWidth, frameHeight)
   return await mozjpegEncode(pixelBuf, frameWidth * cols, frameHeight * rows)
 }
+
 export async function getVideoPreviewScale(
   file: string,
   rows: number,

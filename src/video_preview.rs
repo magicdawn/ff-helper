@@ -1,5 +1,5 @@
 use crate::{helper, screengen::_get_screenshot_raw};
-use image::{GenericImage, RgbaImage};
+use image::RgbaImage;
 use log::debug;
 use napi::{
   bindgen_prelude::{AbortSignal, AsyncTask, Buffer},
@@ -105,6 +105,7 @@ pub fn _get_video_preview_raw(
     }
   }
 
+  let start = Instant::now();
   let imgs: Vec<napi::Result<RgbaImage>> = frames
     .par_iter()
     .map(|pos| -> napi::Result<RgbaImage> {
@@ -123,6 +124,7 @@ pub fn _get_video_preview_raw(
       Ok(img)
     })
     .collect();
+  debug!("create {count} frames cost {:?}", start.elapsed());
 
   // check errors
   for img in &imgs {
@@ -133,7 +135,8 @@ pub fn _get_video_preview_raw(
 
   /**
    * draw frame image
-   * 耗时很长, 暂未找到怎么并行 put pixel 到 whole_img
+   * debug 耗时很长, 暂未找到怎么并行 put pixel 到 whole_img
+   * release 耗时大大缩短
    */
   debug!("start overlay {count} frame imgs");
   let start = Instant::now();
@@ -145,25 +148,12 @@ pub fn _get_video_preview_raw(
     let _img = img.as_ref().unwrap();
 
     // use overlay
-    // imageops::overlay(
-    //   &mut whole_img,
-    //   _img,
-    //   (fx * frame_width).into(),
-    //   (fy * frame_height).into(),
-    // );
-
-    // manual put
-    let mut sub_image = whole_img.sub_image(
-      fx * frame_width,
-      fy * frame_height,
-      frame_width,
-      frame_height,
+    image::imageops::overlay(
+      &mut whole_img,
+      _img,
+      (fx * frame_width).into(),
+      (fy * frame_height).into(),
     );
-    for y in 0..frame_height {
-      for x in 0..frame_width {
-        sub_image.put_pixel(x, y, _img.get_pixel(x, y).clone())
-      }
-    }
   }
   let elapsed = start.elapsed();
   debug!("overlay {count} frame imgs cost {elapsed:?}");

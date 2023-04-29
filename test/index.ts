@@ -124,7 +124,7 @@ describe('screengen', () => {
 })
 
 describe('video-preview', () => {
-  it.only('simple', async () => {
+  it('simple', async () => {
     const buf = await getVideoPreviewScale(file, 4, 4, 0.6)
     writeFile(__dirname + '/sample-videos/video-preview-scalex0.6-4x4.jpg', buf)
   })

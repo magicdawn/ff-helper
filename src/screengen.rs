@@ -206,13 +206,12 @@ pub fn _get_screenshot_raw(
       // }
 
       debug!(
-        "decoder.send_packet: dts={:?} pts={:?} ts={:?} video_stream_time_base={:?} byte-position={:?} is_corrupt={:?}",
+        "decoder.send_packet: dts={:?} pts={:?} ts={:?} video_stream_time_base={:?} byte-position={:?}",
         packet.dts(),
         packet.pts(),
         (packet.pts().unwrap_or(0) as f64) * f64::from(video_stream_time_base),
         video_stream_time_base,
         packet.position(),
-        packet.is_corrupt(),
       );
       decoder.send_packet(&packet).map_err(to_napi_err)?;
 

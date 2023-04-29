@@ -116,9 +116,8 @@ pub fn _get_video_preview_raw(
       let ts = ((duration as f64 / count as f64) * (index as f64)).round() as i64;
       debug!("creating frame ({x},{y}) of (grid {cols}x{rows}) index={index} ts={ts}");
 
-      let (vec, width, height) =
-        _get_screenshot_raw(None, Some(file), ts, Some(frame_width), Some(frame_height))?;
-      let img = RgbaImage::from_raw(width, height, vec)
+      let vec = _get_screenshot_raw(None, Some(file), ts, Some(frame_width), Some(frame_height))?;
+      let img = RgbaImage::from_raw(frame_width, frame_height, vec)
         .ok_or_else(|| napi::Error::from_reason("can not create RgbaImage"))?;
 
       Ok(img)

@@ -19,7 +19,7 @@ impl Task for GetScreenshotRaw {
   type JsValue = Buffer;
   type Output = Buffer;
   fn compute(&mut self) -> napi::Result<Self::Output> {
-    let vec = _get_screenshot_raw(None, Some(&self.file), self.ts, self.width, self.height)?.0;
+    let vec = _get_screenshot_raw(None, Some(&self.file), self.ts, self.width, self.height)?;
     Ok(Buffer::from(vec))
   }
   fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
@@ -83,7 +83,7 @@ pub fn _get_screenshot_raw(
   ts: i64,
   display_width: Option<u32>,
   display_height: Option<u32>,
-) -> napi::Result<(Vec<u8>, u32, u32)> {
+) -> napi::Result<Vec<u8>> {
   let mut open_result: helper::Input;
   let input = if input.is_some() {
     input.unwrap()
@@ -271,7 +271,7 @@ pub fn _get_screenshot_raw(
 
   // no rotation
   if info.rotation == 0 {
-    return Ok((buf.to_vec(), width, height));
+    return Ok(buf.to_vec());
   }
 
   // rotate image
@@ -296,5 +296,5 @@ pub fn _get_screenshot_raw(
   }
 
   let img_vec = image.to_vec();
-  Ok((img_vec, width, height))
+  Ok(img_vec)
 }

@@ -13,7 +13,7 @@ use napi_derive::napi;
 use once_cell::sync::Lazy;
 use std::panic::{catch_unwind, UnwindSafe};
 
-pub type NapiResult<T> = Result<T, napi::Error>;
+pub type NapiResult<T> = napi::Result<T>;
 
 pub const NO_VIDEO_STREAM: &str = "can not find any video stream in file";
 

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.4.2 2023-05-01
+
+- ca050f1 chore: tweak rustfmt options
+- 262a535 chore: simplify rs code
+
 ## v0.4.1 2023-04-30
 
 - chore: ffmpeg seek & image overlay tweak

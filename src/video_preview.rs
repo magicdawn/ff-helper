@@ -1,10 +1,8 @@
 use crate::{helper, screengen::_get_screenshot_raw};
 use image::RgbaImage;
 use log::debug;
-use napi::{
-  bindgen_prelude::{AbortSignal, AsyncTask, Buffer},
-  Task,
-};
+use napi::bindgen_prelude::{AbortSignal, AsyncTask, Buffer};
+use napi::Task;
 use napi_derive::napi;
 use rayon::prelude::*;
 use std::time::Instant;

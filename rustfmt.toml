@@ -1,2 +1,4 @@
 tab_spaces = 2
 edition = "2021"
+format_strings = true
+imports_granularity = "Module"

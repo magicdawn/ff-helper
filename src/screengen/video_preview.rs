@@ -7,6 +7,8 @@ use napi_derive::napi;
 use rayon::prelude::*;
 use std::time::Instant;
 
+use super::moz;
+
 pub struct GetVideoPreviewRaw {
   file: String,
   rows: u32,
@@ -14,42 +16,22 @@ pub struct GetVideoPreviewRaw {
   frame_width: u32,
   frame_height: u32,
 }
-
 #[napi]
 impl Task for GetVideoPreviewRaw {
   type Output = Buffer;
   type JsValue = Buffer;
   fn compute(&mut self) -> napi::Result<Self::Output> {
-    let vec = _get_video_preview_raw(
+    Ok(Buffer::from(_get_video_preview_raw(
       &self.file,
       self.rows,
       self.cols,
       self.frame_width,
       self.frame_height,
-    )?;
-    Ok(Buffer::from(vec))
+    )?))
   }
   fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
     Ok(output)
   }
-}
-
-#[napi]
-pub fn get_video_preview_raw_sync(
-  file: String,
-  rows: u32,
-  cols: u32,
-  frame_width: u32,
-  frame_height: u32,
-) -> napi::Result<Buffer> {
-  GetVideoPreviewRaw {
-    file,
-    rows,
-    cols,
-    frame_width,
-    frame_height,
-  }
-  .compute()
 }
 
 #[napi]
@@ -72,6 +54,57 @@ pub fn get_video_preview_raw(
     signal,
   )
 }
+
+///---------------------------------------------
+///
+/// jpeg
+///
+///---------------------------------------------
+
+pub struct GetVideoPreviewJpeg(GetVideoPreviewRaw);
+
+#[napi]
+impl Task for GetVideoPreviewJpeg {
+  type Output = Buffer;
+  type JsValue = Buffer;
+  fn compute(&mut self) -> napi::Result<Self::Output> {
+    Ok(Buffer::from(_get_video_preview_jpeg(
+      &self.0.file,
+      self.0.rows,
+      self.0.cols,
+      self.0.frame_width,
+      self.0.frame_height,
+    )?))
+  }
+  fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
+    Ok(output)
+  }
+}
+
+#[napi]
+pub fn get_video_preview_jpeg(
+  file: String,
+  rows: u32,
+  cols: u32,
+  frame_width: u32,
+  frame_height: u32,
+  signal: Option<AbortSignal>,
+) -> AsyncTask<GetVideoPreviewJpeg> {
+  AsyncTask::with_optional_signal(
+    GetVideoPreviewJpeg(GetVideoPreviewRaw {
+      file,
+      rows,
+      cols,
+      frame_width,
+      frame_height,
+    }),
+    signal,
+  )
+}
+
+///------------------------------------------
+/// impl details
+///------------------------------------------
 
 struct FramePos {
   x: u32,
@@ -156,4 +189,18 @@ pub fn _get_video_preview_raw(
   debug!("overlay {count} frame imgs cost {elapsed:?}");
 
   Ok(whole_img.to_vec())
+}
+
+pub fn _get_video_preview_jpeg(
+  file: &String,
+  rows: u32,
+  cols: u32,
+  frame_width: u32,
+  frame_height: u32,
+) -> napi::Result<Vec<u8>> {
+  let buf = _get_video_preview_raw(file, rows, cols, frame_width, frame_height)?;
+  let img = RgbaImage::from_raw(frame_width * cols, frame_height * rows, buf)
+    .ok_or_else(|| napi::Error::from_reason("can not construct RgbaImage"))?;
+  let encoded = moz::mozjpeg_encode(&img, None)?;
+  Ok(encoded)
 }

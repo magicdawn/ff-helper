@@ -12,6 +12,7 @@ import {
   getVideoDurationSync,
   getVideoInfo,
   getVideoInfoSync,
+  getVideoPreviewJpeg,
   getVideoPreviewScale,
   getVideoRotation,
   getVideoRotationSync,
@@ -124,8 +125,14 @@ describe('screengen', () => {
 })
 
 describe('video-preview', () => {
-  it('simple', async () => {
+  it('.getVideoPreviewScale', async () => {
     const buf = await getVideoPreviewScale(file, 4, 4, 0.6)
     writeFile(__dirname + '/sample-videos/video-preview-scalex0.6-4x4.jpg', buf)
+  })
+
+  it('.getVideoPreviewJpeg', async () => {
+    const { displayWidth, displayHeight } = await getVideoInfo(file)
+    const buf = await getVideoPreviewJpeg(file, 4, 4, displayWidth * 0.5, displayHeight * 0.5)
+    writeFile(__dirname + '/sample-videos/video-preview-mozjpeg-scalex0.6-4x4.jpg', buf)
   })
 })

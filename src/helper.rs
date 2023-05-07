@@ -11,7 +11,10 @@ pub use ff::Error as FFError;
 use ff::Rescale;
 use napi_derive::napi;
 use once_cell::sync::Lazy;
-use std::panic::{catch_unwind, UnwindSafe};
+use std::{
+  any::Any,
+  panic::{catch_unwind, UnwindSafe},
+};
 
 pub type NapiResult<T> = napi::Result<T>;
 
@@ -137,18 +140,14 @@ where
   let result = catch_unwind(f);
   match result {
     Ok(inner) => Ok(inner),
-    Err(cause) => {
-      if let Ok(cause_string) = cause.downcast::<String>() {
-        Err(napi::Error::from_reason(format!(
-          "rust panic: {}",
-          cause_string
-        )))
-      } else {
-        Err(napi::Error::from_reason(format!(
-          "rust panic: {}",
-          "uknown reason"
-        )))
-      }
-    }
+    Err(cause) => Err(panic_cause_to_napi_error(cause)),
+  }
+}
+
+pub fn panic_cause_to_napi_error(cause: Box<dyn Any + Send>) -> napi::Error {
+  if let Ok(cause_string) = cause.downcast::<String>() {
+    napi::Error::from_reason(format!("rust panic: {}", cause_string))
+  } else {
+    napi::Error::from_reason(format!("rust panic: {}", "uknown reason"))
   }
 }

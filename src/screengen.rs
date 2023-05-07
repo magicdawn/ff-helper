@@ -7,6 +7,9 @@ use log::debug;
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
+mod moz;
+mod video_preview;
+
 pub struct GetScreenshotRaw {
   file: String,
   ts: i64, // timestamp in millseconds
@@ -25,26 +28,6 @@ impl Task for GetScreenshotRaw {
   fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
     Ok(output)
   }
-}
-
-/**
- * synchronous get screenshot raw pixel buffer at [ts] for [file],
- * optional [width] & [height] fallback to video width & height
- */
-#[napi]
-pub fn get_screenshot_raw_sync(
-  file: String,
-  ts: i64,
-  width: Option<u32>,
-  height: Option<u32>,
-) -> napi::Result<Buffer> {
-  GetScreenshotRaw {
-    file,
-    ts,
-    width,
-    height,
-  }
-  .compute()
 }
 
 /**

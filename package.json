@@ -1,6 +1,6 @@
 {
   "name": "ff-helper",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "ffmpeg helper by napi-rs binding",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

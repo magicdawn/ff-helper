@@ -20,8 +20,7 @@
   ],
   "dependencies": {
     "@napi-rs/cli": "^2.15.2",
-    "dayjs": "^1.11.7",
-    "sharp": "^0.32.0"
+    "dayjs": "^1.11.7"
   },
   "devDependencies": {
     "@magicdawn/prettier-config": "^0.0.2",

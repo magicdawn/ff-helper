@@ -34,6 +34,9 @@ impl Task for GetVideoPreviewRaw {
   }
 }
 
+/**
+ * get video preview raw pixel buffer
+ */
 #[napi]
 pub fn get_video_preview_raw(
   file: String,
@@ -56,15 +59,13 @@ pub fn get_video_preview_raw(
 }
 
 ///---------------------------------------------
-///
 /// jpeg
-///
 ///---------------------------------------------
 
-pub struct GetVideoPreviewJpeg(GetVideoPreviewRaw);
+pub struct GetVideoPreview(GetVideoPreviewRaw);
 
 #[napi]
-impl Task for GetVideoPreviewJpeg {
+impl Task for GetVideoPreview {
   type Output = Buffer;
   type JsValue = Buffer;
   fn compute(&mut self) -> napi::Result<Self::Output> {
@@ -81,17 +82,20 @@ impl Task for GetVideoPreviewJpeg {
   }
 }
 
+/**
+ * get video preview jpeg Buffer
+ */
 #[napi]
-pub fn get_video_preview_jpeg(
+pub fn get_video_preview(
   file: String,
   rows: u32,
   cols: u32,
   frame_width: u32,
   frame_height: u32,
   signal: Option<AbortSignal>,
-) -> AsyncTask<GetVideoPreviewJpeg> {
+) -> AsyncTask<GetVideoPreview> {
   AsyncTask::with_optional_signal(
-    GetVideoPreviewJpeg(GetVideoPreviewRaw {
+    GetVideoPreview(GetVideoPreviewRaw {
       file,
       rows,
       cols,
@@ -147,7 +151,8 @@ pub fn _get_video_preview_raw(
       let ts = ((duration as f64 / count as f64) * (index as f64)).round() as i64;
       debug!("creating frame ({x},{y}) of (grid {cols}x{rows}) index={index} ts={ts}");
 
-      let vec = _get_screenshot_raw(None, Some(file), ts, Some(frame_width), Some(frame_height))?;
+      let (vec, _, _) =
+        _get_screenshot_raw(None, Some(file), ts, Some(frame_width), Some(frame_height))?;
       let img = RgbaImage::from_raw(frame_width, frame_height, vec)
         .ok_or_else(|| napi::Error::from_reason("can not create RgbaImage"))?;
 

@@ -19,13 +19,24 @@ export interface VideoInfo {
   /** display height, after apply rotation   */
   displayHeight: number
 }
+/**
+ * get video preview raw pixel buffer
+*/
 export function getVideoPreviewRaw(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
-export function getVideoPreviewJpeg(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
+/**
+ * get video preview jpeg Buffer
+*/
+export function getVideoPreview(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * get screenshot raw pixel buffer at [ts] for [file],
  * optional [width] & [height] fallback to video width & height
 */
 export function getScreenshotRaw(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
+/**
+ * get screenshot jpeg buffer at [ts] for [file],
+ * optional [width] & [height] fallback to video width & height
+*/
+export function getScreenshot(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * Return the libavutil build-time configuration.
 */

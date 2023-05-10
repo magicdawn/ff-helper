@@ -1,5 +1,6 @@
 // port of https://gitlab.com/opennota/screengen
 
+use self::moz::mozjpeg_encode;
 use crate::helper::{self, *};
 use ff::Rescale;
 use image::{imageops, RgbaImage};
@@ -10,6 +11,9 @@ use napi_derive::napi;
 mod moz;
 mod video_preview;
 
+///---------------------------------------------------
+/// raw
+///---------------------------------------------------
 pub struct GetScreenshotRaw {
   file: String,
   ts: i64, // timestamp in millseconds
@@ -17,12 +21,18 @@ pub struct GetScreenshotRaw {
   height: Option<u32>,
 }
 
+impl GetScreenshotRaw {
+  fn compute_raw(&self) -> napi::Result<(Vec<u8>, u32, u32)> {
+    _get_screenshot_raw(None, Some(&self.file), self.ts, self.width, self.height)
+  }
+}
+
 #[napi]
 impl Task for GetScreenshotRaw {
   type JsValue = Buffer;
   type Output = Buffer;
   fn compute(&mut self) -> napi::Result<Self::Output> {
-    let vec = _get_screenshot_raw(None, Some(&self.file), self.ts, self.width, self.height)?;
+    let (vec, _, _) = self.compute_raw()?;
     Ok(Buffer::from(vec))
   }
   fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
@@ -53,6 +63,57 @@ pub fn get_screenshot_raw(
   )
 }
 
+///---------------------------------------------------
+/// jpeg
+///---------------------------------------------------
+
+pub struct GetScreenshot(GetScreenshotRaw);
+
+#[napi]
+impl Task for GetScreenshot {
+  type JsValue = Buffer;
+  type Output = Buffer;
+  fn compute(&mut self) -> napi::Result<Self::Output> {
+    let (vec, width, height) = self.0.compute_raw()?;
+    let vec = mozjpeg_encode(
+      &RgbaImage::from_raw(width, height, vec)
+        .ok_or_else(|| napi::Error::from_reason("can not construct RgbaImage"))?,
+      None,
+    )?;
+    Ok(Buffer::from(vec))
+  }
+  fn resolve(&mut self, _: napi::Env, output: Self::Output) -> napi::Result<Self::JsValue> {
+    Ok(output)
+  }
+}
+
+/**
+ * get screenshot jpeg buffer at [ts] for [file],
+ * optional [width] & [height] fallback to video width & height
+ */
+#[napi]
+pub fn get_screenshot(
+  file: String,
+  ts: i64,
+  width: Option<u32>,
+  height: Option<u32>,
+  signal: Option<AbortSignal>,
+) -> AsyncTask<GetScreenshot> {
+  AsyncTask::with_optional_signal(
+    GetScreenshot(GetScreenshotRaw {
+      file,
+      ts,
+      width,
+      height,
+    }),
+    signal,
+  )
+}
+
+///------------------------------------------
+/// impl details
+///------------------------------------------
+
 //
 // some notes
 //
@@ -66,7 +127,7 @@ pub fn _get_screenshot_raw(
   ts: i64,
   display_width: Option<u32>,
   display_height: Option<u32>,
-) -> napi::Result<Vec<u8>> {
+) -> napi::Result<(Vec<u8>, u32, u32)> {
   let mut open_result: helper::Input;
   let input = if input.is_some() {
     input.unwrap()
@@ -89,8 +150,11 @@ pub fn _get_screenshot_raw(
    * frame_extract = 1920x1080
    * use image-rs to rotate to 1080x1920, same as (display_width x display_height)
    */
-  let mut width = display_width.unwrap_or(info.display_width);
-  let mut height = display_height.unwrap_or(info.display_height);
+  let display_width = display_width.unwrap_or(info.display_width);
+  let display_height = display_height.unwrap_or(info.display_height);
+
+  let mut width = display_width;
+  let mut height = display_height;
   if info.should_swap {
     (width, height) = (height, width)
   }
@@ -254,7 +318,7 @@ pub fn _get_screenshot_raw(
 
   // no rotation
   if info.rotation == 0 {
-    return Ok(buf.to_vec());
+    return Ok((buf.to_vec(), display_width, display_height));
   }
 
   // rotate image
@@ -279,5 +343,5 @@ pub fn _get_screenshot_raw(
   }
 
   let img_vec = image.to_vec();
-  Ok(img_vec)
+  Ok((img_vec, display_width, display_height))
 }

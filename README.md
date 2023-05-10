@@ -18,7 +18,7 @@ It will run cargo build when install, make sure you have rust toolchain installe
 ### macOS
 
 ```sh
-brew install pkg-config ffmpeg
+brew install pkg-config ffmpeg nasm
 ```
 
 ### On Debian-based systems

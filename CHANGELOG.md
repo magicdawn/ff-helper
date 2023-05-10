@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.5.0 2023-05-10
+
+- feat: use rust mozjpeg crate, rm npm sharp dep. requires nasm
+
 ## v0.4.2 2023-05-01
 
 - ca050f1 chore: tweak rustfmt options

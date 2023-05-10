@@ -50,10 +50,14 @@ jobs:
       - uses: codecov/codecov-action@v3
 
       # typedoc
-      - run: pnpm add typedoc -g
-      - run: typedoc ./ts-src/index.ts
+      - if: github.ref_name === 'main'
+        run: pnpm add typedoc -g
 
-      - name: Deploy gh-pages
+      - if: github.ref_name === 'main'
+        run: typedoc ./ts-src/index.ts
+
+      - if: github.ref_name === 'main'
+        name: Deploy gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

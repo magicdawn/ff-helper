@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.6.0
+
+- bundle ff-helper.darwin-arm64.node compiled from Apple M2
+- update cargo deps
+
 ## v0.5.0 2023-05-10
 
 - feat: use rust mozjpeg crate, rm npm sharp dep. requires nasm

@@ -15,7 +15,6 @@ pub fn mozjpeg_encode(img: &RgbaImage, config: Option<MozConfig>) -> napi::Resul
 
     let (width, height) = (img.width() as usize, img.height() as usize);
     comp.set_size(width, height);
-    comp.set_mem_dest();
 
     /**
      * options
@@ -29,16 +28,13 @@ pub fn mozjpeg_encode(img: &RgbaImage, config: Option<MozConfig>) -> napi::Resul
     comp.set_progressive_mode();
     comp.set_color_space(config.color_space);
 
-    comp.start_compress();
-    // replace with your image data
-    // let pixels = img.as_raw().as_slice();
-    let pixels = img.as_ref();
-    assert!(comp.write_scanlines(pixels));
+    let mut comp = comp.start_compress(Vec::new())?;
 
-    comp.finish_compress();
-    let jpeg_bytes = comp
-      .data_to_vec()
-      .map_err(|_| napi::Error::from_reason("mozjpeg data_to_vec errored"))?;
+    // replace with your image data
+    let pixels = img.as_ref();
+    comp.write_scanlines(pixels)?;
+
+    let jpeg_bytes = comp.finish()?;
     Ok(jpeg_bytes)
   })?
 }

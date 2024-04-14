@@ -17,10 +17,13 @@ Cargo.lock
 **/*.tsbuildinfo
 /lib
 
-# for test
-sample-videos/
+# test
 coverage
 .nyc_*
+test/fixtures/*
+!test/fixtures/sample-videos/
+test/fixtures/sample-videos/*
+!test/fixtures/sample-videos/sample.mp4
 
 # typedoc
 /docs

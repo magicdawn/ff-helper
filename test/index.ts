@@ -98,7 +98,7 @@ describe('screengen', () => {
     {
       const info = await getVideoInfo(file)
       const imgBuf = await screengenScale(file, 1000, 0.5)
-      const img = __dirname + '/sample-videos/file-screenshot-1000ms-x0.5.jpg'
+      const img = __dirname + '/fixtures/file-screenshot-1000ms-x0.5.jpg'
       await fse.writeFile(img, imgBuf)
       await checkImg(img, Math.trunc(info.width * 0.5), Math.trunc(info.height * 0.5))
     }
@@ -106,7 +106,7 @@ describe('screengen', () => {
     // float will be truncated by napi-rs
     {
       const imgBuf = await screengen(file, 1000, 200.85, 100.45)
-      const img = __dirname + '/sample-videos/file-getScreenshotJpeg-float-1000ms-200x100.jpg'
+      const img = __dirname + '/fixtures/file-getScreenshotJpeg-float-1000ms-200x100.jpg'
       await fse.writeFile(img, imgBuf)
       await checkImg(img, 200, 100)
     }
@@ -115,7 +115,7 @@ describe('screengen', () => {
     {
       const info = await getVideoInfo(fileRotated)
       const imgBuf = await screengenScale(fileRotated, 1000, 0.5)
-      const img = __dirname + '/sample-videos/fileRotated-screenshot-1000ms-x0.5.jpg'
+      const img = __dirname + '/fixtures/fileRotated-screenshot-1000ms-x0.5.jpg'
       await fse.writeFile(img, imgBuf)
       await checkImg(img, info.displayWidth * 0.5, info.displayHeight * 0.5)
     }
@@ -125,7 +125,7 @@ describe('screengen', () => {
 describe('video-preview', () => {
   it('.getVideoPreviewScale', async () => {
     const buf = await getVideoPreviewScale(file, 4, 4, 0.6)
-    writeFile(__dirname + '/sample-videos/video-preview-scalex0.6-4x4.jpg', buf)
+    writeFile(__dirname + '/fixtures/video-preview-scalex0.6-4x4.jpg', buf)
   })
 
   it('.getVideoPreview', async () => {

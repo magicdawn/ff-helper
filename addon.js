@@ -224,17 +224,32 @@ switch (platform) {
         }
         break
       case 'arm':
-        localFileExisted = existsSync(
-          join(__dirname, 'ff-helper.linux-arm-gnueabihf.node')
-        )
-        try {
-          if (localFileExisted) {
-            nativeBinding = require('./ff-helper.linux-arm-gnueabihf.node')
-          } else {
-            nativeBinding = require('ff-helper-linux-arm-gnueabihf')
+        if (isMusl()) {
+          localFileExisted = existsSync(
+            join(__dirname, 'ff-helper.linux-arm-musleabihf.node')
+          )
+          try {
+            if (localFileExisted) {
+              nativeBinding = require('./ff-helper.linux-arm-musleabihf.node')
+            } else {
+              nativeBinding = require('ff-helper-linux-arm-musleabihf')
+            }
+          } catch (e) {
+            loadError = e
           }
-        } catch (e) {
-          loadError = e
+        } else {
+          localFileExisted = existsSync(
+            join(__dirname, 'ff-helper.linux-arm-gnueabihf.node')
+          )
+          try {
+            if (localFileExisted) {
+              nativeBinding = require('./ff-helper.linux-arm-gnueabihf.node')
+            } else {
+              nativeBinding = require('ff-helper-linux-arm-gnueabihf')
+            }
+          } catch (e) {
+            loadError = e
+          }
         }
         break
       case 'riscv64':
@@ -264,6 +279,20 @@ switch (platform) {
           } catch (e) {
             loadError = e
           }
+        }
+        break
+      case 's390x':
+        localFileExisted = existsSync(
+          join(__dirname, 'ff-helper.linux-s390x-gnu.node')
+        )
+        try {
+          if (localFileExisted) {
+            nativeBinding = require('./ff-helper.linux-s390x-gnu.node')
+          } else {
+            nativeBinding = require('ff-helper-linux-s390x-gnu')
+          }
+        } catch (e) {
+          loadError = e
         }
         break
       default:

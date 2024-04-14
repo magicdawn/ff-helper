@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.6.1
+
+- 7a7af0b chore: update rs & js deps
+
 ## v0.6.0
 
 - bundle ff-helper.darwin-arm64.node compiled from Apple M2

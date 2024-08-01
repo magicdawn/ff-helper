@@ -22,62 +22,62 @@ export interface VideoInfo {
 /**
  * get video preview raw pixel buffer
 */
-export function getVideoPreviewRaw(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
+export declare function getVideoPreviewRaw(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * get video preview jpeg Buffer
 */
-export function getVideoPreview(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
+export declare function getVideoPreview(file: string, rows: number, cols: number, frameWidth: number, frameHeight: number, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * get screenshot raw pixel buffer at [ts] for [file],
  * optional [width] & [height] fallback to video width & height
 */
-export function getScreenshotRaw(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
+export declare function getScreenshotRaw(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * get screenshot jpeg buffer at [ts] for [file],
  * optional [width] & [height] fallback to video width & height
 */
-export function getScreenshot(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
+export declare function getScreenshot(file: string, ts: number, width?: number | undefined | null, height?: number | undefined | null, signal?: AbortSignal | undefined | null): Promise<Buffer>
 /**
  * Return the libavutil build-time configuration.
 */
-export function configuration(): string
+export declare function configuration(): string
 /**
  * Return the LIBAVUTIL_VERSION_INT constant.
 */
-export function version(): number
+export declare function version(): number
 /**
  * Return the libavutil license.
 */
-export function license(): string
+export declare function license(): string
 /**
  * Return an informative version string.
  * This usually is the actual release version number or a git commit description.
  * This string has no fixed format and can change any time.
  * It should never be parsed by code.
 */
-export function versionInfo(): string
+export declare function versionInfo(): string
 /**
  * get video duration synchronous, return number as ms
 */
-export function getVideoDurationSync(file: string): number
+export declare function getVideoDurationSync(file: string): number
 /**
  * get video duration, return number as ms
 */
-export function getVideoDuration(file: string, signal?: AbortSignal | undefined | null): Promise<number>
+export declare function getVideoDuration(file: string, signal?: AbortSignal | undefined | null): Promise<number>
 /**
  * get video rotation synchronous, in degrees (0-360), counterclockwise
 */
-export function getVideoRotationSync(file: string): number
+export declare function getVideoRotationSync(file: string): number
 /**
  * get video rotation, in degrees (0-360), counterclockwise
 */
-export function getVideoRotation(file: string, signal?: AbortSignal | undefined | null): Promise<number>
-export function getMetadata(file: string): void
+export declare function getVideoRotation(file: string, signal?: AbortSignal | undefined | null): Promise<number>
+export declare function getMetadata(file: string): void
 /**
  * get video information synchronous. (width, height, duration, rotation etc)
 */
-export function getVideoInfoSync(file: string): VideoInfo
+export declare function getVideoInfoSync(file: string): VideoInfo
 /**
  * get video information. (width, height, duration, rotation etc)
 */
-export function getVideoInfo(file: string, signal?: AbortSignal | undefined | null): Promise<VideoInfo>
+export declare function getVideoInfo(file: string, signal?: AbortSignal | undefined | null): Promise<VideoInfo>

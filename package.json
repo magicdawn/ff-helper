@@ -78,7 +78,6 @@
     "lint-staged": "^16.1.6",
     "prettier": "^3.6.2",
     "sharp": "^0.34.3",
-    "should": "^13.2.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

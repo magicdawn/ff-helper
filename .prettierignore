@@ -5,3 +5,4 @@ dist
 
 /addon.js
 /addon.d.ts
+pnpm-lock.yaml

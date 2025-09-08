@@ -17,8 +17,7 @@ beforeAll(() => {
   // }
 
   // 90 clockwise
-  // ffmpeg -y -i 'sample.mp4' -c copy -metadata:s:v:0 rotate=270 'sample-rotated-90.mp4'
   if (!existsSync(fileRotated)) {
-    execSync(`ffmpeg -y -i '${file}' -c copy -metadata:s:v:0 rotate=270 '${fileRotated}'`)
+    execSync(`ffmpeg -y -display_rotation 270 -i '${file}' -c copy '${fileRotated}'`)
   }
 })

@@ -23,7 +23,8 @@ jobs:
       - name: apt install
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libblas-dev ffmpeg
+          packages: clang libavcodec-dev libavformat-dev libavutil-dev pkg-config ffmpeg
+          # libavdevice-dev libblas-dev
 
       - uses: Swatinem/rust-cache@v2
 

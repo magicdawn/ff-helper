@@ -23,7 +23,7 @@ jobs:
       - name: apt install
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev ffmpeg
+          packages: clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libblas-dev ffmpeg
 
       - uses: Swatinem/rust-cache@v2
 
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: pnpm
 
       - run: pnpm install
 

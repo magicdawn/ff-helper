@@ -6,7 +6,7 @@
 mod helper;
 mod screengen;
 
-use helper::{ff, ffsys, to_napi_err, VideoInfo};
+use helper::{VideoInfo, ff, ffsys, to_napi_err};
 use napi::bindgen_prelude::*;
 use napi::*;
 use napi_derive::{module_exports, napi};

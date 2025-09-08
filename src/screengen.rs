@@ -3,7 +3,7 @@
 use self::moz::mozjpeg_encode;
 use crate::helper::{self, *};
 use ff::Rescale;
-use image::{imageops, RgbaImage};
+use image::{RgbaImage, imageops};
 use log::debug;
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
@@ -188,7 +188,8 @@ pub fn _get_screenshot_raw(
     let seek_min_ts = (ts - acceptable_range as i64).rescale((1, 1000), ff::rescale::TIME_BASE);
     let seek_max_ts = (ts + acceptable_range as i64).rescale((1, 1000), ff::rescale::TIME_BASE);
     log::debug!(
-      "[seek]: use input.seek ts={ts} seek_min_ts={seek_min_ts} seek_ts={seek_ts} seek_max_ts={seek_max_ts} stream_index={stream_index}");
+      "[seek]: use input.seek ts={ts} seek_min_ts={seek_min_ts} seek_ts={seek_ts} seek_max_ts={seek_max_ts} stream_index={stream_index}"
+    );
     input
       .seek(seek_ts, seek_min_ts..seek_max_ts)
       .map_err(|e| napi::Error::from_reason(format!("can't seek to timestamp: {:?}", e)))?;
@@ -199,7 +200,8 @@ pub fn _get_screenshot_raw(
     let seek_min_ts: i64 = 0;
     let seek_max_ts = (ts + 1000 as i64).rescale((1, 1000), stream_time_base);
     log::debug!(
-      "[seek]: use stream time_base({stream_time_base:?}) ts={ts} seek_min_ts={seek_min_ts} seek_ts={seek_ts} seek_max_ts={seek_max_ts} stream-index={stream_index}");
+      "[seek]: use stream time_base({stream_time_base:?}) ts={ts} seek_min_ts={seek_min_ts} seek_ts={seek_ts} seek_max_ts={seek_max_ts} stream-index={stream_index}"
+    );
     unsafe {
       let seek_result = match ffsys::avformat_seek_file(
         input.as_mut_ptr(),

@@ -1,10 +1,8 @@
+import { writeFile } from 'node:fs/promises'
 import fse from 'fs-extra'
-import { writeFile } from 'fs/promises'
 import sharp from 'sharp'
-import 'should'
-import should from 'should'
+import { describe, expect, it } from 'vitest'
 import {
-  VideoInfo,
   configuration,
   getVideoDuration,
   getVideoDurationDisplay,
@@ -18,45 +16,46 @@ import {
   getVideoRotationSync,
   screengen,
   screengenScale,
+  type VideoInfo,
 } from '../ts-src'
 import { duration, durationDisplay, file, fileRotated } from './setup'
 
 async function checkImg(file: string, width: number, height: number) {
   const metadata = await sharp(file).metadata()
-  metadata.width!.should.equal(width)
-  metadata.height!.should.equal(height)
+  expect(metadata.width!).toBe(width)
+  expect(metadata.height!).toBe(height)
 }
 
 describe('ff-helper', () => {
   it('.configuration', () => {
-    configuration().includes('--').should.ok()
+    expect(configuration().includes('--')).toBe(true)
   })
 
   it('.getVideoDurationSync', () => {
-    getVideoDurationSync(file).should.approximately(duration, 1000)
+    expect(Math.abs(getVideoDurationSync(file) - duration)).toBeLessThanOrEqual(1000)
   })
   it('.getVideoDuration', async () => {
-    ;(await getVideoDuration(file)).should.approximately(duration, 1000)
+    expect(Math.abs((await getVideoDuration(file)) - duration)).toBeLessThanOrEqual(1000)
   })
 
-  it('.getVideoDurationDisplaySync', async () => {
-    getVideoDurationDisplaySync(file).should.eql(durationDisplay)
+  it('.getVideoDurationDisplaySync', () => {
+    expect(getVideoDurationDisplaySync(file)).toEqual(durationDisplay)
   })
   it('.getVideoDurationDisplay', async () => {
-    ;(await getVideoDurationDisplay(file)).should.eql(durationDisplay)
+    expect(await getVideoDurationDisplay(file)).toEqual(durationDisplay)
   })
 
   it('.getVideoRotationSync', () => {
-    getVideoRotationSync(file).should.eql(0)
-    getVideoRotationSync(fileRotated).should.eql(270)
+    expect(getVideoRotationSync(file)).toBe(0)
+    expect(getVideoRotationSync(fileRotated)).toBe(270)
   })
   it('.getVideoRotation', async () => {
-    ;(await getVideoRotation(file)).should.eql(0)
-    ;(await getVideoRotation(fileRotated)).should.eql(270)
+    expect(await getVideoRotation(file)).toBe(0)
+    expect(await getVideoRotation(fileRotated)).toBe(270)
   })
 
   it('.getVideoInfo', async () => {
-    ;(await getVideoInfo(file)).should.deepEqual({
+    expect(await getVideoInfo(file)).toEqual({
       duration,
       rotation: 0,
       width: 3840,
@@ -68,7 +67,7 @@ describe('ff-helper', () => {
   })
   it('.getVideoInfoSync', () => {
     // 有 rotate 时, width/height 不变, 需要 user 转换
-    getVideoInfoSync(fileRotated).should.deepEqual({
+    expect(getVideoInfoSync(fileRotated)).toEqual({
       duration,
       rotation: 270,
       width: 3840,
@@ -84,11 +83,11 @@ describe('error tolerant', () => {
   it('no panic exit', async () => {
     try {
       await getVideoInfo(__filename)
-    } catch (e) {
-      should.ok(e instanceof Error)
-      e.message.includes('ffmpeg').should.ok()
-      e.message.includes('Invalid data found when processing input').should.ok()
-      e.code.should.equal('GenericFailure')
+    } catch (e: any) {
+      expect(e).toBeInstanceOf(Error)
+      expect(e.message).toContain('ffmpeg')
+      expect(e.message).toContain('Invalid data found when processing input')
+      expect(e.code).toBe('GenericFailure')
     }
   })
 })
@@ -125,12 +124,12 @@ describe('screengen', () => {
 describe('video-preview', () => {
   it('.getVideoPreviewScale', async () => {
     const buf = await getVideoPreviewScale(file, 4, 4, 0.6)
-    writeFile(__dirname + '/fixtures/video-preview-scalex0.6-4x4.jpg', buf)
+    await writeFile(__dirname + '/fixtures/video-preview-scalex0.6-4x4.jpg', buf)
   })
 
   it('.getVideoPreview', async () => {
     const { displayWidth, displayHeight } = await getVideoInfo(file)
     const buf = await getVideoPreview(file, 4, 4, displayWidth * 0.5, displayHeight * 0.5)
-    writeFile(__dirname + '/sample-videos/video-preview-mozjpeg-scalex0.6-4x4.jpg', buf)
+    await writeFile(__dirname + '/fixtures/video-preview-mozjpeg-scalex0.6-4x4.jpg', buf)
   })
 })

@@ -3,17 +3,17 @@ pub use ffmpeg_next as ff;
 pub use ffmpeg_sys_next as ffsys;
 
 // type shortcut
+pub use ff::Error as FFError;
 pub use ff::codec::packet::side_data::Type as SideDataType;
 pub use ff::format::context::Input;
 pub use ff::media::Type as MediaType;
-pub use ff::Error as FFError;
 
 use ff::Rescale;
 use napi_derive::napi;
 use once_cell::sync::Lazy;
 use std::{
   any::Any,
-  panic::{catch_unwind, UnwindSafe},
+  panic::{UnwindSafe, catch_unwind},
 };
 
 pub type NapiResult<T> = napi::Result<T>;

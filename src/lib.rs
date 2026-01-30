@@ -8,15 +8,13 @@ mod screengen;
 
 use helper::{VideoInfo, ff, ffsys, to_napi_err};
 use napi::bindgen_prelude::*;
-use napi::*;
-use napi_derive::{module_exports, napi};
+use napi_derive::napi;
 use std::{ffi::CStr, str::from_utf8_unchecked};
 
-#[module_exports]
-fn init(_: JsObject) -> napi::Result<()> {
+#[napi_derive::module_init]
+fn init() {
   env_logger::init();
-  ff::init().map_err(to_napi_err)?;
-  Ok(())
+  ff::init().map_err(to_napi_err).unwrap();
 }
 
 /**
@@ -60,12 +58,12 @@ struct GetVideoDuration {
 #[napi]
 impl Task for GetVideoDuration {
   type Output = i64;
-  type JsValue = JsNumber;
+  type JsValue = i64;
   fn compute(&mut self) -> Result<Self::Output> {
     helper::get_duration(&helper::open(&self.file)?)
   }
-  fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
-    env.create_int64(output)
+  fn resolve(&mut self, _: Env, output: Self::Output) -> Result<Self::JsValue> {
+    Ok(output)
   }
 }
 
@@ -74,7 +72,7 @@ impl Task for GetVideoDuration {
  */
 #[napi]
 fn get_video_duration_sync(file: String) -> napi::Result<i64> {
-  GetVideoDuration { file }.compute()
+  Task::compute(&mut GetVideoDuration { file })
 }
 
 /**
@@ -91,12 +89,12 @@ struct GetVideoRotation {
 #[napi]
 impl Task for GetVideoRotation {
   type Output = i32;
-  type JsValue = JsNumber;
+  type JsValue = i32;
   fn compute(&mut self) -> Result<Self::Output> {
     helper::get_rotation(&helper::open(&self.file)?)
   }
-  fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
-    env.create_int32(output)
+  fn resolve(&mut self, _: Env, output: Self::Output) -> Result<Self::JsValue> {
+    Ok(output)
   }
 }
 
@@ -105,7 +103,7 @@ impl Task for GetVideoRotation {
  */
 #[napi]
 fn get_video_rotation_sync(file: String) -> napi::Result<i32> {
-  GetVideoRotation { file }.compute()
+  Task::compute(&mut GetVideoRotation { file })
 }
 
 /**
@@ -125,7 +123,7 @@ fn get_metadata(file: String) -> napi::Result<()> {
   let video_stream = input
     .streams()
     .best(ff::media::Type::Video)
-    .ok_or(helper::NO_VIDEO_STREAM_ERR.clone())?;
+    .ok_or(helper::NO_VIDEO_STREAM_ERR.try_clone()?)?;
   let video_metadata = video_stream.metadata();
   println!("video metadata {:#?}", video_metadata);
 
@@ -157,7 +155,7 @@ impl Task for GetVideoInfo {
  */
 #[napi]
 fn get_video_info_sync(file: String) -> napi::Result<VideoInfo> {
-  GetVideoInfo { file }.compute()
+  Task::compute(&mut GetVideoInfo { file })
 }
 
 /**

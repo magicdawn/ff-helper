@@ -162,7 +162,7 @@ pub fn _get_screenshot_raw(
   let stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or(NO_VIDEO_STREAM_ERR.clone())?;
+    .ok_or(NO_VIDEO_STREAM_ERR.try_clone()?)?;
   let stream_index = stream.index();
   let stream_time_base = stream.time_base();
   debug!(

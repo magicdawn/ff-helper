@@ -140,7 +140,7 @@ pub fn _get_video_preview_raw(
   }
 
   let start = Instant::now();
-  let imgs: Vec<napi::Result<RgbaImage>> = frames
+  let imgs: Vec<RgbaImage> = frames
     .par_iter()
     .map(|pos| -> napi::Result<RgbaImage> {
       let x = pos.x;
@@ -157,15 +157,8 @@ pub fn _get_video_preview_raw(
 
       Ok(img)
     })
-    .collect();
+    .collect::<Result<_, _>>()?;
   debug!("create {count} frames cost {:?}", start.elapsed());
-
-  // check errors
-  for img in &imgs {
-    if img.is_err() {
-      return Err(img.clone().err().unwrap());
-    }
-  }
 
   /**
    * draw frame image
@@ -178,13 +171,10 @@ pub fn _get_video_preview_raw(
     let frame = &frames[index];
     let fx = frame.x;
     let fy = frame.y;
-
-    let _img = img.as_ref().unwrap();
-
     // use overlay
     image::imageops::overlay(
       &mut whole_img,
-      _img,
+      img,
       (fx * frame_width).into(),
       (fy * frame_height).into(),
     );

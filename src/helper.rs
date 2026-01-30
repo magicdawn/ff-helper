@@ -44,7 +44,7 @@ pub fn get_rotation(input: &Input) -> NapiResult<i32> {
   let video_stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or(NO_VIDEO_STREAM_ERR.clone())?;
+    .ok_or(NO_VIDEO_STREAM_ERR.try_clone()?)?;
 
   let display_matrix = video_stream
     .side_data()
@@ -98,7 +98,7 @@ pub fn get_info(input: &Input) -> NapiResult<VideoInfo> {
   let video_stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or(NO_VIDEO_STREAM_ERR.clone())?;
+    .ok_or(NO_VIDEO_STREAM_ERR.try_clone()?)?;
 
   let codec =
     ff::codec::context::Context::from_parameters(video_stream.parameters()).map_err(to_napi_err)?;

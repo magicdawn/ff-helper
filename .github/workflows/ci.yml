@@ -14,26 +14,22 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
 
       # no cache
       # - name: apt install
       #   run: sudo apt install -y clang pkg-config libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev ffmpeg
-
       - name: apt install
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: clang libavcodec-dev libavformat-dev libavutil-dev pkg-config ffmpeg libavdevice-dev libblas-dev libavfilter-dev
 
       - uses: Swatinem/rust-cache@v2
-
-      - uses: pnpm/action-setup@v4
-        # with: { version: 8 }
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: pnpm
 
       - run: pnpm install
 
@@ -42,7 +38,6 @@ jobs:
         with:
           path: 'test/sample-videos/*.mp4'
           key: ${{ runner.os }}-${{ hashFiles('./test/setup.ts') }}
-
       # test
       - run: pnpm test-cover
 

@@ -72,7 +72,7 @@ impl Task for GetVideoDuration {
  */
 #[napi]
 fn get_video_duration_sync(file: String) -> napi::Result<i64> {
-  Task::compute(&mut GetVideoDuration { file })
+  (GetVideoDuration { file }).compute()
 }
 
 /**
@@ -103,7 +103,7 @@ impl Task for GetVideoRotation {
  */
 #[napi]
 fn get_video_rotation_sync(file: String) -> napi::Result<i32> {
-  Task::compute(&mut GetVideoRotation { file })
+  (GetVideoRotation { file }).compute()
 }
 
 /**
@@ -123,7 +123,7 @@ fn get_metadata(file: String) -> napi::Result<()> {
   let video_stream = input
     .streams()
     .best(ff::media::Type::Video)
-    .ok_or(helper::NO_VIDEO_STREAM_ERR.try_clone()?)?;
+    .ok_or_else(helper::create_no_video_stream_err)?;
   let video_metadata = video_stream.metadata();
   println!("video metadata {:#?}", video_metadata);
 
@@ -155,7 +155,7 @@ impl Task for GetVideoInfo {
  */
 #[napi]
 fn get_video_info_sync(file: String) -> napi::Result<VideoInfo> {
-  Task::compute(&mut GetVideoInfo { file })
+  (GetVideoInfo { file }).compute()
 }
 
 /**

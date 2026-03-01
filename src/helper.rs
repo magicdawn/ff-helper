@@ -10,7 +10,6 @@ pub use ff::media::Type as MediaType;
 
 use ff::Rescale;
 use napi_derive::napi;
-use once_cell::sync::Lazy;
 use std::{
   any::Any,
   panic::{UnwindSafe, catch_unwind},
@@ -20,8 +19,10 @@ pub type NapiResult<T> = napi::Result<T>;
 
 pub const NO_VIDEO_STREAM: &str = "can not find any video stream in file";
 
-pub static NO_VIDEO_STREAM_ERR: Lazy<napi::Error> =
-  Lazy::new(|| napi::Error::from_reason(NO_VIDEO_STREAM));
+#[inline]
+pub(crate) fn create_no_video_stream_err() -> napi::Error {
+  napi::Error::from_reason(NO_VIDEO_STREAM)
+}
 
 pub fn to_napi_err(err: impl std::fmt::Debug) -> napi::Error {
   napi::Error::from_reason(format!("{:?}", err))
@@ -44,7 +45,7 @@ pub fn get_rotation(input: &Input) -> NapiResult<i32> {
   let video_stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or(NO_VIDEO_STREAM_ERR.try_clone()?)?;
+    .ok_or_else(create_no_video_stream_err)?;
 
   let display_matrix = video_stream
     .side_data()
@@ -98,7 +99,7 @@ pub fn get_info(input: &Input) -> NapiResult<VideoInfo> {
   let video_stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or(NO_VIDEO_STREAM_ERR.try_clone()?)?;
+    .ok_or_else(create_no_video_stream_err)?;
 
   let codec =
     ff::codec::context::Context::from_parameters(video_stream.parameters()).map_err(to_napi_err)?;

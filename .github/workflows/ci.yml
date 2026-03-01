@@ -31,9 +31,9 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - run: ls *.node
+      - run: ls *.node 2>/dev/null || echo "no .node files"
       - run: pnpm install
-      - run: ls *.node
+      - run: ls *.node 2>/dev/null || echo "no .node files"
 
       # cache samples
       - uses: actions/cache@v3

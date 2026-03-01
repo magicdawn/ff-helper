@@ -29,9 +29,11 @@ jobs:
         with:
           packages: clang libavcodec-dev libavformat-dev libavutil-dev pkg-config ffmpeg libavdevice-dev libblas-dev libavfilter-dev
 
-      # - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@v2
 
+      - run: ls *.node
       - run: pnpm install
+      - run: ls *.node
 
       # cache samples
       - uses: actions/cache@v3

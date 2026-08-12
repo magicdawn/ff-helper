@@ -1,7 +1,8 @@
 {
   "name": "ff-helper",
+  "type": "module",
   "version": "0.6.2",
-  "packageManager": "pnpm@10.30.3+sha512.c961d1e0a2d8e354ecaa5166b822516668b7f44cb5bd95122d590dd81922f606f5473b6d23ec4a5be05e7fcd18e8488d47d978bbe981872f1145d06e9a740017",
+  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1",
   "description": "ffmpeg helper by napi-rs binding",
   "author": "magicdawn",
   "license": "MIT",
@@ -22,8 +23,13 @@
     "video-rotation",
     "video-duration"
   ],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
   "files": [
     "./ff-helper.*.node",
     "CHANGELOG.md",
@@ -43,8 +49,8 @@
   },
   "scripts": {
     "prepare": "husky",
-    "build:debug": "napi build --platform --js addon.js --dts addon.d.ts",
-    "build:release": "napi build --platform --js addon.js --dts addon.d.ts --release",
+    "build:debug": "napi build --platform --esm --js addon.js --dts addon.d.ts",
+    "build:release": "napi build --platform --esm --js addon.js --dts addon.d.ts --release --strip",
     "dev": "pnpm build:debug",
     "build:tsc": "rm -rf lib; tsc",
     "build": "pnpm build:release && pnpm test && pnpm build:tsc",
@@ -59,29 +65,29 @@
     "_version": "napi version"
   },
   "dependencies": {
-    "@napi-rs/cli": "^3.5.1",
-    "dayjs": "^1.11.19"
+    "@napi-rs/cli": "^3.8.5",
+    "dayjs": "^1.11.21"
   },
   "devDependencies": {
-    "@magicdawn/eslint-config": "^1.6.1",
+    "@magicdawn/eslint-config": "^1.6.17",
     "@magicdawn/prettier-config": "^0.1.0",
-    "@swc/core": "^1.15.18",
+    "@swc/core": "^1.15.47",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^25.3.3",
-    "@typescript-eslint/eslint-plugin": "^8.56.1",
-    "@typescript-eslint/parser": "^8.56.1",
-    "@vitest/coverage-v8": "4.0.18",
+    "@types/node": "^26.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/parser": "^8.67.0",
+    "@vitest/coverage-v8": "4.1.10",
     "dl-vampire": "^2.1.7",
-    "eslint": "^9.39.3",
+    "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.1.8",
-    "fs-extra": "^11.3.3",
+    "fs-extra": "^11.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.3.0",
-    "prettier": "^3.8.1",
-    "sharp": "^0.34.5",
+    "lint-staged": "^17.3.0",
+    "prettier": "^3.9.6",
+    "sharp": "^0.35.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.10"
   },
   "napi": {
     "binaryName": "ff-helper",

@@ -1,5 +1,6 @@
-onlyBuiltDependencies:
-  - '@swc/core'
-  - esbuild
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  '@swc/core': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+minimumReleaseAge: 1440

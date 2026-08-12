@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
+import duration from 'dayjs/plugin/duration.js'
 dayjs.extend(duration)
 
-import * as addon from '../addon'
-export * from '../addon'
+// eslint-disable-next-line import/first
+import * as addon from '../addon.js'
+export * from '../addon.js'
 
 /**
  * synchronous get humanized video duration for display, like `00:10:30` mean 10 minutes 30 seconds
@@ -55,12 +56,7 @@ export const screengenScale = getScreenshotScale
 /**
  * generate preview for video, with scale
  */
-export async function getVideoPreviewScale(
-  file: string,
-  rows: number,
-  cols: number,
-  scale?: number
-) {
+export async function getVideoPreviewScale(file: string, rows: number, cols: number, scale?: number) {
   scale = validateScale(scale)
   const info = await addon.getVideoInfo(file)
   const frameWidth = info.displayWidth * scale

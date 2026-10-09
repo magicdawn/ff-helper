@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>license | ff-helper</title><meta name="description" content="Documentation for ff-helper"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>__napiBindingTarget | ff-helper</title><meta name="description" content="Documentation for ff-helper"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container"><a href="../index.html" class="title">ff-helper</a>
 <div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
@@ -8,20 +8,16 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
-<li><a href="" aria-current="page">license</a></li></ul>
-<h1>Function license</h1></div>
-<section class="tsd-panel">
-<ul class="tsd-signatures">
-<li class="">
-<div class="tsd-signature tsd-anchor-link" id="license"><span class="tsd-kind-call-signature">license</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#license" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
-<div class="tsd-description">
-<div class="tsd-comment tsd-typography"><ul>
-<li>Return the libavutil license.</li>
-</ul>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<li><a href="" aria-current="page">__napiBindingTarget</a></li></ul>
+<h1>Variable __napiBindingTarget<code class="tsd-tag">Const</code></h1></div>
+<div class="tsd-signature"><span class="tsd-kind-variable">__napiBindingTarget</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;native&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;wasm32-wasi&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;wasm32-wasip1&quot;</span></div>
+<div class="tsd-comment tsd-typography"><p>Which binding artifact the generated loader actually loaded: <code>'native'</code> for
+a native addon, otherwise the <code>platformArchABI</code> of the WASI flavor. Every
+flavor napi-rs can build is listed, because <code>NAPI_RS_NATIVE_LIBRARY_PATH</code>
+can point the loader at a WASI artifact this package does not build itself.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/magicdawn/ff-helper/blob/acc589e40e184fdbf46740d8a2ce4f72d68775b5/addon.d.ts#L62">addon.d.ts:62</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/magicdawn/ff-helper/blob/acc589e40e184fdbf46740d8a2ce4f72d68775b5/addon.d.ts#L10">addon.d.ts:10</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

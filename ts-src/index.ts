@@ -1,10 +1,9 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration.js'
-dayjs.extend(duration)
+import * as addon from '../addon-try-global-first.js'
 
-// eslint-disable-next-line import/first
-import * as addon from '../addon.js'
-export * from '../addon.js'
+export * from '../addon-try-global-first.js'
+dayjs.extend(duration)
 
 /**
  * synchronous get humanized video duration for display, like `00:10:30` mean 10 minutes 30 seconds

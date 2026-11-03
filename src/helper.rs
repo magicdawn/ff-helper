@@ -7,45 +7,43 @@ pub use ff::Error as FFError;
 pub use ff::codec::packet::side_data::Type as SideDataType;
 pub use ff::format::context::Input;
 pub use ff::media::Type as MediaType;
+pub use napi::anyhow;
 
 use ff::Rescale;
 use napi_derive::napi;
-use std::{
-  any::Any,
-  panic::{UnwindSafe, catch_unwind},
-};
+use std::any::Any;
+use std::panic::{UnwindSafe, catch_unwind};
 
 pub type NapiResult<T> = napi::Result<T>;
-
-pub const NO_VIDEO_STREAM: &str = "can not find any video stream in file";
+pub type AnyhowResult<T> = anyhow::Result<T>;
 
 #[inline]
-pub(crate) fn create_no_video_stream_err() -> napi::Error {
-  napi::Error::from_reason(NO_VIDEO_STREAM)
+pub(crate) fn no_video_stream_err(file: &str) -> anyhow::Error {
+  anyhow::anyhow!("can not find any video stream in file: {}", file)
 }
 
 pub fn to_napi_err(err: impl std::fmt::Debug) -> napi::Error {
   napi::Error::from_reason(format!("{:?}", err))
 }
 
-pub fn open(file: &String) -> NapiResult<Input> {
-  ff::format::input(file).map_err(to_napi_err)
+pub fn open(file: &str) -> AnyhowResult<Input> {
+  ff::format::input(file).map_err(|e| anyhow::anyhow!("ffmpeg open file error: {:#?}", e))
 }
 
-pub fn get_duration(input: &Input) -> NapiResult<i64> {
+pub fn get_duration(input: &Input) -> i64 {
   // AVFormatContext.duration: in AV_TIME_BASE fractional seconds
   // target: scale to 1/1000s aka ms
   let duration = input.duration().rescale(ff::rescale::TIME_BASE, (1, 1000));
-  Ok(duration)
+  duration
 }
 
-pub fn get_rotation(input: &Input) -> NapiResult<i32> {
+pub fn get_rotation(input: &Input, file: &str) -> AnyhowResult<i32> {
   let mut rotation: i32 = 0;
 
   let video_stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or_else(create_no_video_stream_err)?;
+    .ok_or_else(|| no_video_stream_err(file))?;
 
   let display_matrix = video_stream
     .side_data()
@@ -92,14 +90,14 @@ pub struct VideoInfo {
   pub display_height: u32,
 }
 
-pub fn get_info(input: &Input) -> NapiResult<VideoInfo> {
-  let duration = get_duration(input)?;
-  let rotation = get_rotation(input)?;
+pub fn get_info(input: &Input, file: &str) -> AnyhowResult<VideoInfo> {
+  let duration = get_duration(input);
+  let rotation = get_rotation(input, file)?;
 
   let video_stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or_else(create_no_video_stream_err)?;
+    .ok_or_else(|| no_video_stream_err(file))?;
 
   let codec =
     ff::codec::context::Context::from_parameters(video_stream.parameters()).map_err(to_napi_err)?;

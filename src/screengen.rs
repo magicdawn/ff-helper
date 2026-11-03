@@ -5,7 +5,7 @@ use crate::helper::{self, *};
 use ff::Rescale;
 use image::{RgbaImage, imageops};
 use log::debug;
-use napi::bindgen_prelude::*;
+use napi::{anyhow, bindgen_prelude::*};
 use napi_derive::napi;
 
 mod moz;
@@ -20,10 +20,10 @@ pub struct GetScreenshotRaw {
   width: Option<u32>,
   height: Option<u32>,
 }
-
 impl GetScreenshotRaw {
   fn compute_raw(&self) -> napi::Result<(Vec<u8>, u32, u32)> {
-    _get_screenshot_raw(None, Some(&self.file), self.ts, self.width, self.height)
+    _get_screenshot_raw(None, &self.file, self.ts, self.width, self.height)
+      .map_err(napi::Error::from)
   }
 }
 
@@ -123,21 +123,17 @@ pub fn get_screenshot(
 //
 pub fn _get_screenshot_raw(
   input: Option<&mut Input>,
-  file: Option<&String>,
+  file: &str,
   ts: i64,
   display_width: Option<u32>,
   display_height: Option<u32>,
-) -> napi::Result<(Vec<u8>, u32, u32)> {
+) -> AnyhowResult<(Vec<u8>, u32, u32)> {
   let mut open_result: helper::Input;
-  let input = if input.is_some() {
-    input.unwrap()
-  } else {
-    open_result =
-      helper::open(file.ok_or_else(|| to_napi_err("input & file can not be both empty"))?)?;
+  let input = input.unwrap_or({
+    open_result = helper::open(file)?;
     &mut open_result
-  };
-
-  let info = helper::get_info(&input)?;
+  });
+  let info = helper::get_info(&input, &file)?;
 
   /**
    * width & height, fallback to scale=1.0
@@ -162,7 +158,7 @@ pub fn _get_screenshot_raw(
   let stream = input
     .streams()
     .best(MediaType::Video)
-    .ok_or_else(create_no_video_stream_err)?;
+    .ok_or_else(|| no_video_stream_err(file))?;
   let stream_index = stream.index();
   let stream_time_base = stream.time_base();
   debug!(
@@ -337,10 +333,7 @@ pub fn _get_screenshot_raw(
       image = imageops::rotate90(&image);
     }
     _ => {
-      return Err(napi::Error::from_reason(format!(
-        "unsupported rotation {}",
-        info.rotation
-      )));
+      anyhow::bail!("unsupported rotation {}", info.rotation)
     }
   }
 

@@ -6,7 +6,7 @@
 mod helper;
 mod screengen;
 
-use helper::{VideoInfo, ff, ffsys, to_napi_err};
+use crate::helper::{VideoInfo, ff, ffsys, to_napi_err};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use std::{ffi::CStr, str::from_utf8_unchecked};
@@ -60,7 +60,7 @@ impl Task for GetVideoDuration {
   type Output = i64;
   type JsValue = i64;
   fn compute(&mut self) -> Result<Self::Output> {
-    helper::get_duration(&helper::open(&self.file)?)
+    Ok(helper::get_duration(&helper::open(&self.file)?))
   }
   fn resolve(&mut self, _: Env, output: Self::Output) -> Result<Self::JsValue> {
     Ok(output)
@@ -91,7 +91,7 @@ impl Task for GetVideoRotation {
   type Output = i32;
   type JsValue = i32;
   fn compute(&mut self) -> Result<Self::Output> {
-    helper::get_rotation(&helper::open(&self.file)?)
+    helper::get_rotation(&helper::open(&self.file)?, &self.file).map_err(napi::Error::from)
   }
   fn resolve(&mut self, _: Env, output: Self::Output) -> Result<Self::JsValue> {
     Ok(output)
@@ -123,10 +123,9 @@ fn get_metadata(file: String) -> napi::Result<()> {
   let video_stream = input
     .streams()
     .best(ff::media::Type::Video)
-    .ok_or_else(helper::create_no_video_stream_err)?;
+    .ok_or_else(|| helper::no_video_stream_err(&file))?;
   let video_metadata = video_stream.metadata();
   println!("video metadata {:#?}", video_metadata);
-
   Ok(())
 }
 
@@ -140,8 +139,7 @@ impl Task for GetVideoInfo {
   type JsValue = helper::VideoInfo;
 
   fn compute(&mut self) -> Result<Self::Output> {
-    let input = helper::open(&self.file)?;
-    helper::get_info(&input)
+    helper::get_info(&helper::open(&self.file)?, &self.file).map_err(napi::Error::from)
   }
 
   // https://github.com/swc-project/swc/blob/v1.3.49/bindings/binding_core_node/src/transform.rs#L41-L42

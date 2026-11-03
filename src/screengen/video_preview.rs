@@ -116,14 +116,14 @@ struct FramePos {
 }
 
 pub fn _get_video_preview_raw(
-  file: &String,
+  file: &str,
   rows: u32,
   cols: u32,
   frame_width: u32,
   frame_height: u32,
 ) -> napi::Result<Vec<u8>> {
   let input = helper::open(file)?;
-  let info = helper::get_info(&input)?;
+  let info = helper::get_info(&input, file)?;
 
   let count = rows * cols;
   let duration = info.duration;
@@ -150,8 +150,7 @@ pub fn _get_video_preview_raw(
       let ts = ((duration as f64 / count as f64) * (index as f64)).round() as i64;
       debug!("creating frame ({x},{y}) of (grid {cols}x{rows}) index={index} ts={ts}");
 
-      let (vec, _, _) =
-        _get_screenshot_raw(None, Some(file), ts, Some(frame_width), Some(frame_height))?;
+      let (vec, _, _) = _get_screenshot_raw(None, file, ts, Some(frame_width), Some(frame_height))?;
       let img = RgbaImage::from_raw(frame_width, frame_height, vec)
         .ok_or_else(|| napi::Error::from_reason("can not create RgbaImage"))?;
 
